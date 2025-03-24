@@ -30,12 +30,14 @@
 #define BAUD_RATE_115200 0x8B
 
 int kernel_main() {
-  //Do not remove this function
-    init_349();
-
+    init_349();  //Do not remove this function
+    gpio_init(GPIO_A, 0, MODE_GP_OUTPUT, OUTPUT_PUSH_PULL, OUTPUT_SPEED_HIGH, PUPD_NONE, ALT0);
+    gpio_init(GPIO_B, 10, MODE_GP_OUTPUT, OUTPUT_PUSH_PULL, OUTPUT_SPEED_HIGH, PUPD_NONE, ALT0);
+    uart_init(0);
+    timer_init(2, 160, 1);
+    
+    enter_user_mode();
     while(1){
     }
-    
-
     return 0;
 }

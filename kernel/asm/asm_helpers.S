@@ -7,5 +7,7 @@
 .thumb_func
 .global enter_user_mode
 enter_user_mode:
-  bkpt
+  LDR r1, =__psp_stack_top
+  MSR PSP, r1
+  B _crt0
   

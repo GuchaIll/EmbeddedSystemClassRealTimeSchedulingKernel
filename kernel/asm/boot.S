@@ -14,11 +14,11 @@
 
 .global ivt
 ivt:
-.word   0                   /* stack top address */
-.word   0                   /* 1 Reset */
+.word   __msp_stack_top     /* stack top address */
+.word   _reset_             /* 1 Reset */
 .word   _nmi_               /* 2 NMI */
 .word   _hard_fault_        /* 3 Hard Fault */
-.word   spin                /* 4 MM Fault */
+.word   _mm_fault_          /* 4 MM Fault */
 .word   _bus_fault_         /* 5 Bus Fault */
 .word   _usage_fault_       /* 6 Usage Fault */
 .word   spin                /* 7 RESERVED */
@@ -28,8 +28,8 @@ ivt:
 .word   _svc_asm_handler_   /* 11 SV call */
 .word   spin                /* 12 Debug reserved */
 .word   spin                /* 13 RESERVED */
-.word   spin                /* 14 PendSV */
-.word   spin                /* 15 SysTick */
+.word   _pend_sv_           /* 14 PendSV */
+.word   systick_c_handler   /* 15 SysTick */
 .word   spin                /* 16 IRQ0 Window Watchdog Interrupt */
 .word   spin                /* 17 IRQ1 PVD */
 .word   spin                /* 18 IRQ2 TAMPER */
@@ -58,7 +58,7 @@ ivt:
 .word   spin                /* 41 IRQ25 TIM1_UP */
 .word   spin                /* 42 IRQ26 TIM1_TRG_COM */
 .word   spin                /* 43 IRQ27 TIM1_CC   */
-.word   spin                /* 44 IRQ28 TIM2   */
+.word   TIMER2_SERVO_IRQHandler  /* 44 IRQ28 TIM2   */
 .word   spin                /* 45 IRQ29 TIM3 */
 .word   spin                /* 46 IRQ30 TIM5 */
 .word   spin                /* 47 IRQ31 I2C1_EV   */
@@ -68,7 +68,7 @@ ivt:
 .word   spin                /* 51 IRQ35 SPI1   */
 .word   spin                /* 52 IRQ36 SPI2   */
 .word   spin                /* 53 IRQ37 USART1 */
-.word   spin                /* 54 IRQ38 USART2 */
+.word   USART2_IRQHandler   /* 54 IRQ38 USART2 */
 .word   spin                /* 55 IRQ39 USART3   */
 .word   spin                /* 56 IRQ40 EXTI15_10   */
 .word   spin                /* 57 IRQ41 RTCAlarm */
@@ -116,15 +116,88 @@ _bus_fault_ : bkpt
 .thumb_func
 _usage_fault_ : bkpt
 
+
+
+
+
+.thumb_func
+_pend_sv_ : 
+
+  @Stores all registers onto stack
+  @ Note that these values in the stack will be read and then changed by the, 
+  @ scheduler to suit the  next priority thread's stack frame
+  PUSH {r4, r5, r6, r7, r8, r9, r10, r11, LR}
+  
+  @Branches to pend handler after storing the PSP in r0;
+  MOV r0, PSP
+  b pendsv_c_handler
+
+  @Loads values into registers based on SP address that is passed into R0 (msp pointing at the correct TCB) from pendsv_c_handler
+
+  LDR r1, [r0]
+  MSR PSP, r1
+  LDR r4, [r0, #4]
+  LDR r5, [r0, #8]
+  LDR r6, [r0, #12]
+  LDR r7, [r0, #16]
+  LDR r8, [r0, #20]
+  LDR r9, [r0, #24]
+  LDR r10, [r0, #28]
+  LDR r11, [r0, #32]
+  LDR LR, [r0, #36]
+
+  @Branch with exchange with link register
+  bx lr
+  bkpt
+
+.thumb_func
+_spi1_handler: bkpt
+
 .thumb_func
 .global _reset_
 _reset_:
+
+bootloaderStart:
+  LDR r1, = _erodata    @source start address Flash
+  LDR r2, =_k_data       @destination start addr Sram
+  LDR r3, = _data_size   @data size
+  ADD r4, r1, r3         @end Flash address
+  
+flashLoop:
+  CMP r1, r4
+  BGE endFlashLoop
+
+  LDR r5, [r1], #4
+  STR r5, [r2], #4
+
+  B flashLoop
+
+endFlashLoop:
+  LDR r1, =_bss_start @start address of bss
+  LDR r2, = _bss_size
+  MOV r0, #0
+
+  ADD r3, r1, r2
+ 
+bssClearLoop:
+  CMP r1, r3
+  BGE endBssLoop
+
+  STR r0, [r1], #4
+
+  B bssClearLoop
+
+endBssLoop:
   bl kernel_main
-  b  sys_exit
+  bkpt
+
+.thumb_func
+.global _sys_tick_asm_
+_sys_tick_asm_: bkpt
 
 .thumb_func
 .global _svc_asm_handler_
 _svc_asm_handler_:
-  mrs r0, psp             // build exception stack frame
+  mrs r0, psp            
   b svc_c_handler
   
