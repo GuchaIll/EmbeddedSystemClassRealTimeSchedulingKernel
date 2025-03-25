@@ -64,10 +64,11 @@ typedef struct global_threads_info
     uint32_t max_threads;
     uint32_t stack_size;
     uint32_t tick_counter;
+    uint32_t current_thread; //index of the current thread in array
 
 } global_threads_info_t;
 
-global_threads_info_t global_threads_info;
+extern global_threads_info_t global_threads_info;
 
 typedef enum thread_state
 {
@@ -78,11 +79,8 @@ typedef enum thread_state
   DONE //Exit
 } thread_state_t;
 
-typedef struct TCB
-{
-  uint32_t *user_sp; //user stack pointer
-  uint32_t *kernel_sp; //kernel stack pointer
-  
+typedef struct {
+  uint32_t *PSP;
   uint32_t r4;
   uint32_t r5;
   uint32_t r6;
@@ -93,8 +91,12 @@ typedef struct TCB
   uint32_t r11;
   uint32_t lr;
 
-  uint32_t *stack_base_addr;
-  uint32_t *stack_limit;
+} pushed_callee_stack_frame;
+
+typedef struct TCB
+{
+ //main stack pointer
+  pushed_callee_stack_frame *msp;
 
   uint32_t priority; //dynamic priority (0-16), thread ID should equate static priority
   uint32_t computation_time;
@@ -107,21 +109,62 @@ typedef struct TCB
 
 //array of thread control blocks 
 //corresponding to static stack priorities
-TCB_t threads[16];
+TCB_t TCB_ARRAY[16];
+
+int ub_test(){
+  float utilization = 0;
+  int C, T, count = 0;
+  for (int index = 0; index < 16; index ++){
+    if (TCB_ARRAY[index].state == NEW || TCB_ARRAY[index].state == DONE){continue;} // Uninitialized Thread Index in TCB Array
+    C = TCB_ARRAY[index].computation_time;
+    T = TCB_ARRAY[index].period;
+    utilization += (float)C/T;
+    count ++;
+  }
+  if (utilization <= ub_table[count]){
+    return 0;
+  }
+  return -1;
+}
 
 void *pendsv_c_handler(void *context_ptr){
-  (void) context_ptr;
+    /* Store current thread context from memory pointed to by context_ptr into TCB array */
 
-  /* Store current thread context from memory pointed to by context_ptr into TCB array */
+    uint32_t current_thread = sys_get_priority();
 
-  /* Do UB test to decide if current task set is executable? Here or in thread create? */
-
-  /* Pick next thread to run based on algorithm and current thread with status Running */
-
-  /* Load the next thread context onto memory pointed to by context_ptr, change psp or msp if needed?,
-    change status in previous and next threads to appropriate status.*/
-
-  return NULL;
+    pushed_callee_stack_frame * callee_saved_stk = context_ptr;
+  
+    TCB_t * TCB = &TCB_ARRAY[current_thread]; //tcb context automatically stores the entire context
+  
+    /** You might have to alter it but the TA said we do not need to set the register individually here,
+     * could just set TCB->msp = *callee_saved_stk
+     */
+    TCB->msp->r4 = callee_saved_stk->r4;
+    TCB->msp->r5 = callee_saved_stk -> r5;
+    TCB->msp->r6 = callee_saved_stk -> r6;
+    TCB->msp->r7 = callee_saved_stk -> r7;
+    TCB->msp->r8 = callee_saved_stk -> r8;
+    TCB->msp->r9 = callee_saved_stk -> r9;
+    TCB->msp->r10 = callee_saved_stk -> r10;
+    TCB->msp->r11 = callee_saved_stk -> r11;
+    TCB->msp->lr = callee_saved_stk -> lr;
+  
+    /* Go through the threads and determine which ones should be READY or WAITING*/
+  
+    /* Still Have To Implement It*/
+  
+    /* Pick next thread to run based on algorithm and current thread with status Running */
+  
+    int priority = 0;
+    while (TCB_ARRAY[priority].state != READY){
+      priority ++;
+    }
+  
+    TCB_t * next_TCB = &TCB_ARRAY[priority];
+    next_TCB -> state = RUNNING;
+  
+    /* Load pointer to TCB to return value*/
+    return next_TCB;
 }
 
 
@@ -131,8 +174,68 @@ int sys_thread_init(
   void *idle_fn,
   uint32_t max_mutexes
 ){
-  (void) max_threads; (void) stack_size; (void) idle_fn; (void) max_mutexes;
-  return -1;
+  
+  global_threads_info.max_threads = max_threads;
+  global_threads_info.stack_size = mm_log2ceil_size(stack_size);
+
+  //check if the stack size and max threads input are valid < 32KB
+  if(max_threads > 16 || max_threads * stack_size * 4 > 32 * 1024) {
+      return -1;
+  }
+
+  global_threads_info.tick_counter = 0;
+
+
+  //allocate space for kernel and user stacks
+  uint32_t *k_stack_top = (uint32_t *) &__thread_k_stacks_top;
+  uint32_t *u_stack_top = (uint32_t *) &__thread_u_stacks_top;
+  uint32_t *k_stack_low = (uint32_t *) &__thread_k_stacks_low;
+  uint32_t *u_stack_low = (uint32_t *) &__thread_u_stacks_low;
+
+  //Q: the handout said that kernel and user stacks are initiated differently?
+  for(int i = 0; i < max_threads; i++) {
+    
+    TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4);
+    ((pushed_callee_stack_frame *)TCB_ARRAY[i].msp)->PSP = u_stack_top - (i * global_threads_info.stack_size * 4);
+    TCB_ARRAY[i].state = NEW; //Q: what state should the thread be set to in init?
+   
+  }
+  //Initialize the idle thread
+ // threads[max_threads - 1].thread_fn = idle_fn;
+ //assuming max value for max_threads is 14
+  int prio = 14;
+  TCB_ARRAY[prio].computation_time = 0xFFFFFFFF;
+  TCB_ARRAY[prio].period = 0xFFFFFFFF;
+  TCB_ARRAY[prio].priority = max_threads - 1;
+  TCB_ARRAY[prio].vargp = 0;
+
+  uint32_t *user_sp = (uint32_t *)TCB_ARRAY[prio].msp->PSP;
+  user_sp -= sizeof(interrupt_stack_frame) / sizeof(uint32_t);
+
+  interrupt_stack_frame *isf_u = (interrupt_stack_frame *) user_sp;
+  isf_u->r0 = 0;
+  isf_u->r1 = 0;
+  isf_u->r2 = 0;
+  isf_u->r3 = 0;
+  isf_u->r12 = 0;
+  isf_u->lr = LR_RETURN_TO_USER_PSP;
+  isf_u->pc = (uint32_t) idle_fn;
+  isf_u->xPSR = XPSR_INIT;
+
+  TCB_ARRAY[prio].msp->r4 = 0;
+  TCB_ARRAY[prio].msp->r5 = 0;
+  TCB_ARRAY[prio].msp->r6 = 0;
+  TCB_ARRAY[prio].msp->r7 = 0;
+  TCB_ARRAY[prio].msp->r8 = 0;
+  TCB_ARRAY[prio].msp->r9 = 0;
+  TCB_ARRAY[prio].msp->r10 = 0;
+  TCB_ARRAY[prio].msp->r11 = 0;
+  TCB_ARRAY[prio].msp->lr = LR_RETURN_TO_USER_PSP;
+
+  TCB_ARRAY[prio].msp->PSP = user_sp;
+  TCB_ARRAY[prio].state = READY;
+
+  return 0;
 }
 
 int sys_thread_create(
@@ -144,16 +247,16 @@ int sys_thread_create(
 ){
   //check if the thread is already created, or a thread already exists with same priority
   //return error
-  if(prio >= global_threads_info.max_threads || threads[prio].state == READY) {
+  if(prio >= global_threads_info.max_threads || TCB_ARRAY[prio].state == READY) {
     return -1;
   }
 
-  threads[prio].priority = prio;
-  threads[prio].computation_time = C;
-  threads[prio].period = T;
-  threads[prio].vargp = vargp;
+  TCB_ARRAY[prio].priority = prio;
+  TCB_ARRAY[prio].computation_time = C;
+  TCB_ARRAY[prio].period = T;
+  TCB_ARRAY[prio].vargp = vargp;
 
-  uint32_t *user_sp = threads[prio].user_sp;
+  uint32_t *user_sp = TCB_ARRAY[prio].msp->PSP;
   user_sp -= sizeof(interrupt_stack_frame) / sizeof(uint32_t);
 
   interrupt_stack_frame *isf_u = (interrupt_stack_frame *) user_sp;
@@ -166,21 +269,22 @@ int sys_thread_create(
   isf_u->pc = (uint32_t) fn;
   isf_u->xPSR = XPSR_INIT;
 
-  threads[prio].r4 = 0;
-  threads[prio].r5 = 0;
-  threads[prio].r6 = 0;
-  threads[prio].r7 = 0;
-  threads[prio].r8 = 0;
-  threads[prio].r9 = 0;
-  threads[prio].r10 = 0;
-  threads[prio].r11 = 0;
-  threads[prio].lr = LR_RETURN_TO_USER_PSP;
+  TCB_ARRAY[prio].msp->r4 = 0;
+  TCB_ARRAY[prio].msp->r5 = 0;
+  TCB_ARRAY[prio].msp->r6 = 0;
+  TCB_ARRAY[prio].msp->r7 = 0;
+  TCB_ARRAY[prio].msp->r8 = 0;
+  TCB_ARRAY[prio].msp->r9 = 0;
+  TCB_ARRAY[prio].msp->r10 = 0;
+  TCB_ARRAY[prio].msp->r11 = 0;
+  TCB_ARRAY[prio].msp->lr = LR_RETURN_TO_USER_PSP;
 
-  threads[prio].user_sp = user_sp;
+  TCB_ARRAY[prio].msp->PSP = user_sp;
 
-  interrupt_stack_frame *isf_k = (interrupt_stack_frame *) threads[prio].kernel_sp;
 
-  threads[prio].state = READY;
+
+
+  TCB_ARRAY[prio].state = READY;
 
   //Q: do we need to set up the kernel stack as well?
   if(ub_test() < 0) {
@@ -191,8 +295,19 @@ int sys_thread_create(
 }
 
 int sys_scheduler_start( uint32_t frequency ){
-  (void) frequency;
-  return -1;
+ 
+  systick_init(frequency);
+
+  //setting up the default thread 
+  int prio = 15;
+  TCB_ARRAY[prio].computation_time = 0xFFFFFFFF;
+  TCB_ARRAY[prio].period = 0xFFFFFFFF;
+  TCB_ARRAY[prio].priority = 15;
+  TCB_ARRAY[prio].vargp = 0;
+
+  pend_pendsv();
+
+  return 0;
 }
 
 uint32_t sys_get_priority(){
@@ -208,6 +323,7 @@ uint32_t sys_thread_time(){
 }
 
 void sys_thread_kill(){
+
 }
 
 void sys_wait_until_next_period(){
