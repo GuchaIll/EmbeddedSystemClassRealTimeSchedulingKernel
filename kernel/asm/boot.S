@@ -124,7 +124,7 @@ _reset_:
 
 .thumb_func
 .global _svc_asm_handler_
-_svc_asm_handler_:
-  mrs r0, psp             // build exception stack frame
+_svc_asm_handler_:        
+  mrs r0, psp                       
   b svc_c_handler
   

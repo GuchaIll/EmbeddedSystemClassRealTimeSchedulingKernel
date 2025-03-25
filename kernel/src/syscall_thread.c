@@ -82,6 +82,17 @@ typedef struct TCB
 {
   uint32_t *user_sp; //user stack pointer
   uint32_t *kernel_sp; //kernel stack pointer
+  
+  uint32_t r4;
+  uint32_t r5;
+  uint32_t r6;
+  uint32_t r7;
+  uint32_t r8;
+  uint32_t r9;
+  uint32_t r10;
+  uint32_t r11;
+  uint32_t lr;
+
   uint32_t *stack_base_addr;
   uint32_t *stack_limit;
 
@@ -89,9 +100,9 @@ typedef struct TCB
   uint32_t computation_time;
   uint32_t period; 
   thread_state_t state;
-  void (*thread_fn)(void *); //function pointer to thread function
+
   void *vargp; //arguments to pass to thread function
-  uint32_t context[16]; //context for thread
+
 } TCB_t;
 
 //array of thread control blocks 
@@ -132,16 +143,17 @@ int sys_thread_init(
   for(int i = 0; i < max_threads; i++) {
     threads[i].user_sp = u_stack_top - (i * stack_size * 4);
     threads[i].kernel_sp = k_stack_top - (i * stack_size * 4);
+
+
     threads[i].state = NEW; //Q: what state should the thread be set to in init?
     threads[i].stack_base_addr = u_stack_top - (i * stack_size * 4);
     threads[i].stack_limit = threads[i].stack_base_addr - (stack_size * 4);
   }
   //Initialize the idle thread
-  threads[max_threads - 1].thread_fn = idle_fn;
+ // threads[max_threads - 1].thread_fn = idle_fn;
   threads[max_threads - 1].priority = max_threads - 1;
   threads[max_threads - 1].vargp = NULL;
 
-  
   return 0;
 }
 
@@ -158,7 +170,6 @@ int sys_thread_create(
     return -1;
   }
 
-  threads[prio].thread_fn = fn;
   threads[prio].priority = prio;
   threads[prio].computation_time = C;
   threads[prio].period = T;
@@ -167,23 +178,36 @@ int sys_thread_create(
   uint32_t *user_sp = threads[prio].user_sp;
   user_sp -= sizeof(interrupt_stack_frame) / sizeof(uint32_t);
 
-  interrupt_stack_frame *isf = (interrupt_stack_frame *) user_sp;
-  isf->r0 = (uint32_t) vargp;
-  isf->r1 = 0;
-  isf->r2 = 0;
-  isf->r3 = 0;
-  isf->r12 = 0;
-  isf->lr = LR_RETURN_TO_USER_PSP; //Q: what value should lr be set to, how do we know which mode should be returned to
-  isf->pc = (uint32_t) fn;
-  isf->xPSR = XPSR_INIT; //Q: how does the value of xPSR affect the thread
+  interrupt_stack_frame *isf_u = (interrupt_stack_frame *) user_sp;
+  isf_u->r0 = (uint32_t) vargp;
+  isf_u->r1 = 0;
+  isf_u->r2 = 0;
+  isf_u->r3 = 0;
+  isf_u->r12 = 0;
+  isf_u->lr = LR_RETURN_TO_USER_PSP;
+  isf_u->pc = (uint32_t) fn;
+  isf_u->xPSR = XPSR_INIT;
+
+  threads[prio].r4 = 0;
+  threads[prio].r5 = 0;
+  threads[prio].r6 = 0;
+  threads[prio].r7 = 0;
+  threads[prio].r8 = 0;
+  threads[prio].r9 = 0;
+  threads[prio].r10 = 0;
+  threads[prio].r11 = 0;
+  threads[prio].lr = LR_RETURN_TO_USER_PSP;
 
   threads[prio].user_sp = user_sp;
+
+  interrupt_stack_frame *isf_k = (interrupt_stack_frame *) threads[prio].kernel_sp;
 
   threads[prio].state = READY;
 
   //Q: do we need to set up the kernel stack as well?
-  
-
+  if(ub_test() < 0) {
+    return -1;
+  }
 
   return 0;
 }
