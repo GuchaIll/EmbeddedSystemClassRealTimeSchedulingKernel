@@ -122,33 +122,24 @@ _usage_fault_ : bkpt
 
 .thumb_func
 _pend_sv_ : 
-
   @Stores all registers onto stack
-  @ Note that these values in the stack will be read and then changed by the, 
-  @ scheduler to suit the  next priority thread's stack frame
-  PUSH {r4, r5, r6, r7, r8, r9, r10, r11, LR}
+  MRS r0, PSP
+  PUSH {r0, r4, r5, r6, r7, r8, r9, r10, r11, LR}
+  MRS r0, MSP
+  bl pendsv_c_handler
+
+  @Loads values into registers based on SP address that is passed into R0 (msp pointing at the correct TCB) from pendsv_c_handler  
   
-  @Branches to pend handler after storing the PSP in r0;
-  MOV r0, PSP
-  b pendsv_c_handler
-
-  @Loads values into registers based on SP address that is passed into R0 (msp pointing at the correct TCB) from pendsv_c_handler
-
-  LDR r1, [r0]
-  MSR PSP, r1
-  LDR r4, [r0, #4]
-  LDR r5, [r0, #8]
-  LDR r6, [r0, #12]
-  LDR r7, [r0, #16]
-  LDR r8, [r0, #20]
-  LDR r9, [r0, #24]
-  LDR r10, [r0, #28]
-  LDR r11, [r0, #32]
-  LDR LR, [r0, #36]
+  MSR MSP, r0
+  
+  POP {r0, r4, r5, r6, r7, r8, r9, r10, r11, LR}
+  MSR PSP, r0
 
   @Branch with exchange with link register
   bx lr
   bkpt
+
+
 
 .thumb_func
 _spi1_handler: bkpt
