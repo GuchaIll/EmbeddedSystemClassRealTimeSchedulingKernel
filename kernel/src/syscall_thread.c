@@ -59,51 +59,55 @@ typedef struct {
   uint32_t xPSR; /** @brief Register value for xPSR */
 } interrupt_stack_frame;
 
-/**
- * @struct tcb_info_frame
- *
- * @brief  Thread Control block info frame.
- */
-typedef struct {
-  uint32_t psp;
-  uint32_t r0;
-  uint32_t r4;  /** @brief Register value for r12 */
-  uint32_t r5;   /** @brief Register value for r0 */
-  uint32_t r6;   /** @brief Register value for r1 */
-  uint32_t r7;   /** @brief Register value for r2 */
-  uint32_t r8;   /** @brief Register value for r3 */
-  uint32_t r9;  /** @brief Register value for r12 */
-  uint32_t r10;   /** @brief Register value for r0 */
-  uint32_t r11;   /** @brief Register value for r1 */
-  uint32_t lr;   /** @brief Register value for lr*/
-  uint32_t COMPUTE_TIME; /** @brief Worst case compute time for task*/
-  uint32_t PERIOD_TIME; /** @brief How often the thread needs to be run (Deadline = Period)*/
-  uint32_t PRIORITY; /** @brief Unique static priority of task (lower equates to higher priority)*/
-  uint32_t STATUS; /** @brief Task status (Running, Runnable, Waiting, and potentiall Cancelled*/
-} tcb_info_frame;
+typedef struct global_threads_info 
+{
+    uint32_t max_threads;
+    uint32_t stack_size;
+    uint32_t tick_counter;
 
+} global_threads_info_t;
 
-static tcb_info_frame* TCB_Array[16];
+global_threads_info_t global_threads_info;
 
-static int max_size_TCB;
+typedef enum thread_state
+{
+  NEW, //process created
+  READY, //process ready to run
+  RUNNING, //process running
+  WAITING, //process waiting for event
+  DONE //Exit
+} thread_state_t;
 
-static int curr_size_TCB = 0;
+typedef struct TCB
+{
+  uint32_t *user_sp; //user stack pointer
+  uint32_t *kernel_sp; //kernel stack pointer
+  
+  uint32_t r4;
+  uint32_t r5;
+  uint32_t r6;
+  uint32_t r7;
+  uint32_t r8;
+  uint32_t r9;
+  uint32_t r10;
+  uint32_t r11;
+  uint32_t lr;
 
-/* Make the assumption that C cannot be 0 */
-int ub_test(){
-  float utilization = 0;
-  int C, T;
-  for (int index = 0; index < curr_size_TCB; index ++){
-    C = TCB_Array[index] -> COMPUTE_TIME;
-    if (C == 0){continue;} // Uninitialized Thread Index in TCB Array
-    T = TCB_Array[index] -> PERIOD_TIME;
-    utilization += (float)C/T;
-  }
-  if (utilization <= ub_table[curr_size_TCB]){
-    return 0;
-  }
-  return -1;
-}
+  uint32_t *stack_base_addr;
+  uint32_t *stack_limit;
+
+  uint32_t priority; //dynamic priority (0-16), thread ID should equate static priority
+  uint32_t computation_time;
+  uint32_t period; 
+  thread_state_t state;
+
+  void *vargp; //arguments to pass to thread function
+
+} TCB_t;
+
+//array of thread control blocks 
+//corresponding to static stack priorities
+TCB_t threads[16];
 
 void *pendsv_c_handler(void *context_ptr){
   (void) context_ptr;
@@ -121,40 +125,65 @@ void *pendsv_c_handler(void *context_ptr){
 }
 
 
-
-int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, uint32_t max_mutexes){
+int sys_thread_init(
+  uint32_t max_threads,
+  uint32_t stack_size,
+  void *idle_fn,
+  uint32_t max_mutexes
+){
   (void) max_threads; (void) stack_size; (void) idle_fn; (void) max_mutexes;
   return -1;
-
-  /* Sets the size of TCB info array */
-
-  /* Returns back to the user if the rounded stack_size value can fit in the stack space allocated based on max threads. 
-    */
-
-  /* Initialize the idle funtion which should be used when there are no more threads to run (I believe if the user wants
-    a different function than the default idle function)
-    */
 }
 
+int sys_thread_create(
+  void *fn,
+  uint32_t prio,
+  uint32_t C,
+  uint32_t T,
+  void *vargp
+){
+  //check if the thread is already created, or a thread already exists with same priority
+  //return error
+  if(prio >= global_threads_info.max_threads || threads[prio].state == READY) {
+    return -1;
+  }
 
-int sys_thread_create(void *fn, uint32_t prio, uint32_t C, uint32_t T, void *vargp){
-  (void) fn; (void) prio; (void) C; (void) T; (void) vargp;
-  return -1;
+  threads[prio].priority = prio;
+  threads[prio].computation_time = C;
+  threads[prio].period = T;
+  threads[prio].vargp = vargp;
 
-  /* Add to the corresponding index in TCB table array based on unique priority as index */
-  tcb_info_frame * TCB = TCB_Array[curr_size_TCB];
-  
-  TCB -> r0 = vargp;
-  TCB -> PRIORITY = prio;
-  TCB -> COMPUTE_TIME = C;
-  TCB -> PERIOD_TIME = T;
+  uint32_t *user_sp = threads[prio].user_sp;
+  user_sp -= sizeof(interrupt_stack_frame) / sizeof(uint32_t);
 
-  TCB -> psp = fn;
+  interrupt_stack_frame *isf_u = (interrupt_stack_frame *) user_sp;
+  isf_u->r0 = (uint32_t) vargp;
+  isf_u->r1 = 0;
+  isf_u->r2 = 0;
+  isf_u->r3 = 0;
+  isf_u->r12 = 0;
+  isf_u->lr = LR_RETURN_TO_USER_PSP;
+  isf_u->pc = (uint32_t) fn;
+  isf_u->xPSR = XPSR_INIT;
 
-  curr_size_TCB ++;
+  threads[prio].r4 = 0;
+  threads[prio].r5 = 0;
+  threads[prio].r6 = 0;
+  threads[prio].r7 = 0;
+  threads[prio].r8 = 0;
+  threads[prio].r9 = 0;
+  threads[prio].r10 = 0;
+  threads[prio].r11 = 0;
+  threads[prio].lr = LR_RETURN_TO_USER_PSP;
 
-  /* call scheduler algorithm to determine if new set is still schedulable */
-  if (ub_test() < 0){
+  threads[prio].user_sp = user_sp;
+
+  interrupt_stack_frame *isf_k = (interrupt_stack_frame *) threads[prio].kernel_sp;
+
+  threads[prio].state = READY;
+
+  //Q: do we need to set up the kernel stack as well?
+  if(ub_test() < 0) {
     return -1;
   }
 
