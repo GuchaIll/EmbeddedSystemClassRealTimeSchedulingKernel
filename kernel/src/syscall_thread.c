@@ -31,7 +31,7 @@ extern char
   __thread_k_stacks_top;
 //@}
 
-/**
+/** ub_table:
  * @brief      Precalculated values for UB test.
  */
 float ub_table[] = {
@@ -44,7 +44,7 @@ float ub_table[] = {
   .7012, .7009
 };
 
-/**
+/** Stack frame pushed onto PSP upon exception
  * @struct user_stack_frame
  *
  * @brief  Stack frame upon exception.
@@ -60,6 +60,7 @@ typedef struct {
   uint32_t xPSR; /** @brief Register value for xPSR */
 } interrupt_stack_frame;
 
+/** Info that is important for tracking timing, maximum priorities, and stack limits*/
 typedef struct global_threads_info 
 {
     uint32_t max_threads;
@@ -73,16 +74,16 @@ typedef struct global_threads_info
 
 } global_threads_info_t;
 
-
-
+/* Enumerating our thread states */
 typedef enum thread_state{
       NEW, //process created
       READY, //process ready to run
       RUNNING, //process running
       WAITING, //process waiting for event
       DONE //Exit
-  } thread_state_t;
+} thread_state_t;
 
+/* Stack frame pushed onto MSP before intiating context switch */
 typedef struct {
   uint32_t *PSP;
   uint32_t r4;
@@ -97,6 +98,7 @@ typedef struct {
 
 } pushed_callee_stack_frame;
 
+/* TCB struct that keeps track of thread main and program stack contexts and critical timing information*/
 typedef struct TCB{
   pushed_callee_stack_frame *msp;
 
@@ -107,18 +109,27 @@ typedef struct TCB{
 
 } TCB_t;
 
+// Our TCB array which holds corresponding TCBs of our threads
 TCB_t TCB_ARRAY[16];
 
+// Our global thread info struct that holds important information for timing, stack sizes, and max priorities.
 global_threads_info_t global_threads_info;
 
-int ub_test(){
-  float utilization = 0;
-  int C, T, count = 0;
+/* ub_test(C, T)
+  1. Computers C/T of new thread 
+  2. Computes overall utilization based on threads already created
+  3. Sums new thread utilization with old total utilization and checks against corresponding ub bound 
+  4. Returns the result
+*/
+int ub_test(int C, int T){
+  float utilization = (float)C/T;
+  int compute, period = 0;
+  int count = 1;
   for (int index = 0; index < 16; index ++){
     if (TCB_ARRAY[index].state == NEW || TCB_ARRAY[index].state == DONE){continue;} // Uninitialized Thread Index in TCB Array
-    C = TCB_ARRAY[index].computation_time;
-    T = TCB_ARRAY[index].period;
-    utilization += (float)C/T;
+    compute = TCB_ARRAY[index].computation_time;
+    period = TCB_ARRAY[index].period;
+    utilization += (float)compute/period;
     count ++;
   }
   if (utilization <= ub_table[count]){
@@ -127,6 +138,15 @@ int ub_test(){
   return -1;
 }
 
+
+/* thread_scheduler()
+  1. Reduces the compute time left of the currently running thread 
+  2  If compute time is 0, then switch to WAITING state for the thread
+  3. Reduces the period time left of all the threads 
+  4. If period time left is 0, then switch to READY state and reset the values of C time left and T time left 
+  5. Loops through the thread array to find the closest thread to priority 0 that is READY state
+  6. Switches the next thread to be run's state to RUNNING and returns its priority
+*/
 int thread_scheduler(){
   /* Get currently running thread */
   int curr_running = sys_get_priority();
@@ -158,6 +178,12 @@ int thread_scheduler(){
   return priority;
 }
 
+
+/* pendsv_c_handler(context_ptr)
+  1. Saves context to TCB (basically just saving the msp)
+  2. Calls the scheduler to return priority of the next thread to be run
+  3. Retrieves the msp of the next thread to be run and returns that value
+*/
 void *pendsv_c_handler(void *context_ptr){
     /* Store current thread context from memory pointed to by context_ptr into TCB array */
 
@@ -190,6 +216,14 @@ void *pendsv_c_handler(void *context_ptr){
     return next_TCB;
 }
 
+
+/* sys_thread_init(max_threads, stack_size, idle_fn, max_mutexes
+  1. Updates global thread values such as max_threads and stack size
+  2. Computes all psp and msp pointers for threads to be run
+  3. Sets up the idle_fn with the default values at the final value of priortiy in the array (depends on max_threads) 
+  4. Sets up interrupt stack frame for idle_fn on its psp
+  5. Sets up default values in the precomputed msp that contain psp and r4, etc, error code in lr.
+*/
 int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, uint32_t max_mutexes){
   
   global_threads_info.max_threads = max_threads;
@@ -211,12 +245,18 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
 
   //Q: the handout said that kernel and user stacks are initiated differently?
   for(int i = 0; i < max_threads; i++) {
-    
-    TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4);
-    ((pushed_callee_stack_frame *)TCB_ARRAY[i].msp)->PSP = u_stack_top - (i * global_threads_info.stack_size * 4);
+    // TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4);
+    // ((pushed_callee_stack_frame *)TCB_ARRAY[i].msp)->PSP = u_stack_top - (i * global_threads_info.stack_size * 4);
+
+
+    TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(pushed_callee_stack_frame);
+    TCB_ARRAY[i].msp -> PSP = u_stack_top - (i * global_threads_info.stack_size * 4); // Why cast to pushed_callee_stack?
+
+    // TCB_ARRAY[i].msp -> PSP = u_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(interrupt_stack_frame);
     TCB_ARRAY[i].state = NEW; //Q: what state should the thread be set to in init?
-   
   }
+
+
   //Initialize the idle thread
  // threads[max_threads - 1].thread_fn = idle_fn;
  //assuming max value for max_threads is 14
@@ -253,7 +293,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   TCB_ARRAY[prio].state = READY;
 
   /* NEW */
-  /* Setting Idle System Time Variables */
+  /* Setting Idle Thread System Time Variables */
   global_threads_info.thread_absolute_time_start[max_threads-1] = 0;
   global_threads_info.thread_time_left_in_T[max_threads-1] = 1;
   global_threads_info.thread_time_left_in_C[max_threads-1] = 0;
@@ -262,13 +302,21 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   return 0;
 }
 
+
+/* sys_thread_create(fn, prio, C, T, vargp)
+  1. Do checks to ensure that thread creation would be valid
+  2. Updates TCB of corresponding priority with values from inputs 
+  3. Sets up the stack pointed to by the threads MSP (at precomputed address) to contain default values PSP (precomputed), r4 - r11, lr
+  4. Sets up the stack pointed to by the threads PSP with interrupt stack frame and fills it in with function pointer and vargp
+  5. Sets up the global thread info values to include things like appropriate thread absolute start time, and time left in period. 
+*/
 int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
 
   if(prio >= global_threads_info.max_threads || TCB_ARRAY[prio].state == READY) {
     return -1;
   }
 
-  if(ub_test() < 0) {
+  if(ub_test(C, T) < 0) {
     return -1;
   }
 
@@ -312,12 +360,14 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
   return 0;
 }
 
+
 /* Inits the systick timer and runs the pend_sv interrupt */
 int sys_scheduler_start( uint32_t frequency ){
   systick_init(frequency);
   pend_pendsv();
   return 0;
 }
+
 
 /* Loops through TCB array to find priority of thread which is running */
 uint32_t sys_get_priority(){
@@ -329,11 +379,13 @@ uint32_t sys_get_priority(){
   return 0U;
 }
 
+
 // Global From Systick.c
 extern uint32_t total_count;
 uint32_t sys_get_time(){
   return total_count;
 }
+
 
 // Gets priority and indexes into global thread info
 uint32_t sys_thread_time(){
@@ -342,10 +394,11 @@ uint32_t sys_thread_time(){
   return abs_thread_time;
 }
 
+
 /* Permanently deschedules the thread its called from. Checks if valid to kill this particular thread */
 void sys_thread_kill(){
   int priority = sys_get_priority();
-  if (priority == 0){ // Default Thread Is Called It
+  if (priority == 0U){ // Default Thread Is Called It
     sys_exit();
   }
   else if(priority == global_threads_info.max_threads-1){// Idle Thread is Calling It 
@@ -357,20 +410,24 @@ void sys_thread_kill(){
   return;
 }
 
+
 /* Sets current thread to wait until next period*/
 void sys_wait_until_next_period(){
   int priority = sys_get_priority();
   TCB_ARRAY[priority].state = WAITING;
 }
 
+
 kmutex_t *sys_mutex_init( uint32_t max_prio ) {
   (void) max_prio;
   return NULL;
 }
 
+
 void sys_mutex_lock( kmutex_t *mutex ) {
   (void) mutex;
 }
+
 
 void sys_mutex_unlock( kmutex_t *mutex ) {
   (void) mutex;

@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <debug.h>
 #include <syscall.h>
+#include <syscall_thread.h>
 
 #define UNUSED __attribute__((unused))
 
@@ -60,12 +61,16 @@ void svc_c_handler( uint32_t * stack_p ) {
       stack -> R0 = res_write;
     break;
     case 2:
+      stack -> R0 = 1;
     break;
     case 3:
+      stack -> R0 = 1;
     break;
     case 4:
+      stack -> R0 = 1;
     break;
     case 5:
+      stack -> R0 = 1;
     break;
     case 6:
       res_read = sys_read(first_arg, second_arg, third_arg);
@@ -74,33 +79,38 @@ void svc_c_handler( uint32_t * stack_p ) {
     case 7:
       sys_exit(first_arg);
     break;
-    case 8:
-    break;
     case 9:
+      stack -> R0 = (uint32_t)sys_thread_init(first_arg, second_arg, (void*)third_arg, fourth_arg);
     break;
     case 10:
+      stack -> R0 = (uint32_t)sys_thread_create((void*)first_arg, (uint32_t)second_arg, third_arg, fourth_arg, (void*)fifth_arg);
     break;
     case 11:
+      sys_thread_kill();
     break;
     case 12:
+      stack -> R0 = sys_scheduler_start(first_arg);
     break;
     case 13:
+      stack -> R0 = sys_mutex_init();
     break;
     case 14:
+      stack -> R0 = sys_mutex_lock();
     break;
     case 15:
+      stack -> R0 = sys_mutex_unlock();
     break;
     case 16:
+      sys_wait_until_next_period();
     break;
     case 17:
-    break;
-    case 18:
+      stack -> R0 = sys_get_time();
     break;
     case 19:
+      stack -> R0 = sys_get_priority();
     break;
     case 20:
-    break;
-    case 21:
+      stack -> R0 = sys_thread_time();
     break;
     case 22:
       servo_enable = sys_servo_enable((uint8_t)first_arg, (int)second_arg);
