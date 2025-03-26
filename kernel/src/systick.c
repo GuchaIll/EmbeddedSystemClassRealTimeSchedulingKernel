@@ -72,6 +72,7 @@ uint32_t systick_get_ticks() {
 void systick_c_handler() {
    
     total_count += 1;
+    
 
     //for(int i = 0; i < global_threads_info.max_threads;i++)
   //  {
