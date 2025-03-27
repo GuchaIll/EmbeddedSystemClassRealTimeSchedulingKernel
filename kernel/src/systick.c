@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <systick.h>
 #include "syscall_thread.h"
+#include <arm.h>
 
 struct sysclock_map{
     volatile uint32_t STK_CTRL;
@@ -70,27 +71,6 @@ uint32_t systick_get_ticks() {
     setting bit and 27 for clearing from the System Control Block/ nvm thats given to us*/
 
 void systick_c_handler() {
-   
     total_count += 1;
-    
-
-    //for(int i = 0; i < global_threads_info.max_threads;i++)
-  //  {
-    //    if(threads[i].state == WAITING && total_count % threads[i].period == 0)
-    //    {
-    //        threads[i].state = READY;
-    //    }
-   // }
-    
-  //  if(global_threads_info.current_thread != NULL)
-   // {
-   //     global_threads_info.current_thread->computation_time -= 1;
-   //     if(global_threads.current_thread->computation_time == 0)
-  //      {
-  //          global_threads.current_thread->state = READY;
-   //     }
-  //  }
-
-  
     pend_pendsv();
 }
