@@ -31,6 +31,7 @@ struct stack_frame_map {
  * svc_c_handler: process the SVC interrupt, extract the SVC number and arguments, and dispatch the appropriate system call.
  */
 void svc_c_handler( uint32_t * stack_p ) {
+  set_svc_status(1);
   struct stack_frame_map * stack = (struct stack_frame_map *) stack_p;
   /* Referencing Program Counter */
   uint32_t * pc_pointer = (uint32_t*)(stack -> PC);

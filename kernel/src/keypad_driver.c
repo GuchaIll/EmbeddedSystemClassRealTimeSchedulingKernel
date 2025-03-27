@@ -51,14 +51,7 @@
    after the initial return and the button is not pressed anymore*/
 
 
-/*
- * delay: a time interval we add after some reads to debounce keypad presses
- */
-void delay()
-{
-    // systick_delay(1000);
-    return;
-};
+
 
 
 /*
@@ -203,3 +196,11 @@ char keypad_read() {
 }
 
 
+/*
+ * delay: a time interval we add after some reads to debounce keypad presses
+ */
+void delay()
+{
+    // systick_delay(1000);
+    return;
+};

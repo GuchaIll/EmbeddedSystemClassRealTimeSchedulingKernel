@@ -34,7 +34,8 @@ int kernel_main() {
     gpio_init(GPIO_A, 0, MODE_GP_OUTPUT, OUTPUT_PUSH_PULL, OUTPUT_SPEED_HIGH, PUPD_NONE, ALT0);
     gpio_init(GPIO_B, 10, MODE_GP_OUTPUT, OUTPUT_PUSH_PULL, OUTPUT_SPEED_HIGH, PUPD_NONE, ALT0);
     uart_init(0);
-    timer_init(2, 160, 1);
+    //timer_init(2, 160, 1);
+    
     
     enter_user_mode();
     while(1){
