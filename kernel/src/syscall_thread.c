@@ -68,7 +68,7 @@ typedef struct global_threads_info
 {
     uint32_t max_threads;
     uint32_t max_mutexes;
-    uint32_t stack_size;
+    uint32_t stack_size; // Size of stack in words
     uint32_t tick_counter;
     uint32_t current_thread; // index of the current thread in array
 
@@ -155,26 +155,26 @@ int ub_test(int C, int T){
 */
 int thread_scheduler(){
   /* Get currently running thread */
-  int curr_running = sys_get_priority();
-  
-  /* Decrement compute time left  value */
-  int time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running] - 1;
-  global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
+  uint32_t curr_running = sys_get_priority();
+  uint32_t max_threads = global_threads_info.max_threads;
+  int time_left_in_compute = 1;
 
-  /* Check if thread used up all computation time */
-  if (time_left_in_compute == 0){ // Just finished compute time
-    sys_wait_until_next_period();
+  
+  time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running] - 1;
+  global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
+  
+  if (time_left_in_compute == 0){ 
+    TCB_ARRAY[curr_running].state = WAITING;
   }
 
   /* Decrement/reset all values of thread_time_left_in_period and reset state if necessary */
-  for (uint32_t p = 0; p < 16; p ++){
-    int time_left_in_period = 0;
-    if (p < global_threads_info.max_threads){
-      time_left_in_period = global_threads_info.thread_time_left_in_T[p] - 1;
-      global_threads_info.thread_time_left_in_T[p] = time_left_in_period;
-    } 
-    if (time_left_in_period == 0 && (TCB_ARRAY[p].state == WAITING || TCB_ARRAY[p].state == RUNNING)){
+  for (uint32_t p = 0; p < max_threads+2; p ++){
+    int time_left_in_period = global_threads_info.thread_time_left_in_T[p] - 1;
+    global_threads_info.thread_time_left_in_T[p] = time_left_in_period;
+    
+    if (time_left_in_period == 0 && (TCB_ARRAY[p].state == WAITING || TCB_ARRAY[p].state == READY || TCB_ARRAY[p].state == RUNNING)){
       global_threads_info.thread_time_left_in_T[p] = TCB_ARRAY[p].period;
+      global_threads_info.thread_time_left_in_C[p] = TCB_ARRAY[p].computation_time;
       TCB_ARRAY[p].state = READY;
     }
   }
@@ -214,6 +214,8 @@ void *pendsv_c_handler(void *context_ptr){
   
     int priority = thread_scheduler();
 
+    global_threads_info.current_thread = priority;
+
     TCB_t * next_TCB = &TCB_ARRAY[priority];
     next_TCB -> state = RUNNING;
 
@@ -222,7 +224,7 @@ void *pendsv_c_handler(void *context_ptr){
     set_svc_status(svc_stat);
   
     /* Load pointer to TCB to return value*/
-    return next_TCB;
+    return next_TCB -> msp;
 }
 
 
@@ -236,7 +238,12 @@ void *pendsv_c_handler(void *context_ptr){
 int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, uint32_t max_mutexes){
   global_threads_info.max_mutexes = max_mutexes;
   global_threads_info.max_threads = max_threads;
-  global_threads_info.stack_size = (uint32_t) mm_log2ceil_size(stack_size);
+
+  uint32_t size = 256;
+  while (size < stack_size){
+    size = size * 2;
+  }
+  global_threads_info.stack_size = size;
 
   //check if the stack size and if max threads input are valid < 32KB
   if(max_threads > 14 || max_threads * stack_size * 4 > 32 * 1024) {
@@ -258,6 +265,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
     TCB_ARRAY[i].msp = (pushed_callee_stack_frame *)(k_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(pushed_callee_stack_frame));
     TCB_ARRAY[i].msp -> PSP = (u_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(interrupt_stack_frame)); // Why cast to pushed_callee_stack?
     TCB_ARRAY[i].state = NEW; //Q: what state should the thread be set to in init?
+    TCB_ARRAY[i].svc_status = 0; // Might want to set all svc_status to 0?
   }
 
 
@@ -269,21 +277,20 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   // Also should set the default thread to be running
 
   int prio_idle = max_threads;
-  TCB_ARRAY[prio_idle].computation_time = 0x0;
-  TCB_ARRAY[prio_idle].period = 0x0;
+  TCB_ARRAY[prio_idle].computation_time = 0x1;
+  TCB_ARRAY[prio_idle].period = 0x1;
   TCB_ARRAY[prio_idle].priority = prio_idle;
 
-  uint32_t *user_sp = (uint32_t *)TCB_ARRAY[prio_idle].msp->PSP;
+  interrupt_stack_frame *user_sp = (interrupt_stack_frame *)TCB_ARRAY[prio_idle].msp->PSP;
 
-  interrupt_stack_frame *isf_u = (interrupt_stack_frame *) user_sp;
-  isf_u->r0 = 0;
-  isf_u->r1 = 0;
-  isf_u->r2 = 0;
-  isf_u->r3 = 0;
-  isf_u->r12 = 0;
-  isf_u->lr = LR_RETURN_TO_USER_PSP;
-  isf_u->pc = (uint32_t) idle_fn;
-  isf_u->xPSR = XPSR_INIT;
+  user_sp->r0 = 0;
+  user_sp->r1 = 0;
+  user_sp->r2 = 0;
+  user_sp->r3 = 0;
+  user_sp->r12 = 0;
+  user_sp->lr = LR_RETURN_TO_USER_PSP;
+  user_sp->pc = (uint32_t) idle_fn;
+  user_sp->xPSR = XPSR_INIT;
 
   TCB_ARRAY[prio_idle].msp->r4 = 0;
   TCB_ARRAY[prio_idle].msp->r5 = 0;
@@ -297,20 +304,22 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
 
   TCB_ARRAY[prio_idle].state = READY;
 
-  TCB_ARRAY[prio_idle].svc_status = 0;
-
   global_threads_info.thread_absolute_time_start[prio_idle] = 0;
-  global_threads_info.thread_time_left_in_T[prio_idle] = 0;
-  global_threads_info.thread_time_left_in_C[prio_idle] = 0;
-
+  global_threads_info.thread_time_left_in_T[prio_idle] = 1;
+  global_threads_info.thread_time_left_in_C[prio_idle] = 1;
 
   // Initiating default thread values
   int prio_default = max_threads + 1;
-  TCB_ARRAY[prio_default].computation_time = 0x0;
-  TCB_ARRAY[prio_default].period = 0x0;
+  TCB_ARRAY[prio_default].computation_time = 0x1;
+  TCB_ARRAY[prio_default].period = 0x1;
   TCB_ARRAY[prio_default].priority = prio_default;
   TCB_ARRAY[prio_default].state = RUNNING;
-  TCB_ARRAY[prio_default].svc_status = 0;
+  TCB_ARRAY[prio_default].svc_status = get_svc_status();
+
+  global_threads_info.thread_absolute_time_start[prio_default] = 0;
+  global_threads_info.thread_time_left_in_T[prio_default] = 1;
+  global_threads_info.thread_time_left_in_C[prio_default] = 1;
+
   return 0;
 }
 
@@ -336,18 +345,16 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
   TCB_ARRAY[prio].computation_time = C;
   TCB_ARRAY[prio].period = T;
 
-  uint32_t *user_sp = TCB_ARRAY[prio].msp->PSP;
+  interrupt_stack_frame * user_sp = (interrupt_stack_frame *)TCB_ARRAY[prio].msp->PSP;
   
-
-  interrupt_stack_frame *isf_u = (interrupt_stack_frame *) user_sp;
-  isf_u->r0 = (uint32_t) vargp;
-  isf_u->r1 = 0;
-  isf_u->r2 = 0;
-  isf_u->r3 = 0;
-  isf_u->r12 = 0;
-  isf_u->lr = LR_RETURN_TO_USER_PSP;
-  isf_u->pc = (uint32_t) fn;
-  isf_u->xPSR = XPSR_INIT;
+  user_sp->r0 = (uint32_t) vargp;
+  user_sp->r1 = 0;
+  user_sp->r2 = 0;
+  user_sp->r3 = 0;
+  user_sp->r12 = 0;
+  user_sp->lr = LR_RETURN_TO_USER_PSP;
+  user_sp->pc = (uint32_t) fn;
+  user_sp->xPSR = XPSR_INIT;
 
   TCB_ARRAY[prio].msp->r4 = 0;
   TCB_ARRAY[prio].msp->r5 = 0;
@@ -359,11 +366,8 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
   TCB_ARRAY[prio].msp->r11 = 0;
   TCB_ARRAY[prio].msp->lr = LR_RETURN_TO_USER_PSP;
 
-  TCB_ARRAY[prio].msp->PSP = user_sp;
-
   TCB_ARRAY[prio].state = READY;
 
-  TCB_ARRAY[prio].svc_status = 0;
 
   /* Setting New Thread System Time Variables */
   global_threads_info.thread_absolute_time_start[prio] = sys_get_time();
@@ -390,7 +394,7 @@ uint32_t sys_get_priority(){
       return i;
     } 
   }
-  return 0U;
+  return global_threads_info.current_thread;
 }
 
 
@@ -429,6 +433,8 @@ void sys_thread_kill(){
 void sys_wait_until_next_period(){
   int priority = sys_get_priority();
   TCB_ARRAY[priority].state = WAITING;
+
+  pend_pendsv();
 }
 
 

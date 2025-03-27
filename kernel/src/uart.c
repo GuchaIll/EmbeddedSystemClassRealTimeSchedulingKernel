@@ -77,13 +77,17 @@ void initBuffer(){
   ReceiveBuffer.count = 0;
 };
 
+int state;
+
 void enqueue(char c, Queue * buffer){
   if (buffer -> count >= size_of_Queue){
+    
     return;
   }
   buffer->count = buffer-> count + 1;
   buffer->array[buffer ->header] = c;
   buffer -> header = (buffer -> header + 1) % size_of_Queue;
+  
   return;
 }
 
@@ -94,6 +98,7 @@ char dequeue(Queue * buffer){
   buffer -> tail = (buffer -> tail + 1) % size_of_Queue;
   return c;
 }
+
 
 void uart_init(int baud){
   (void) baud; /* Here to suppress the Unused Variable Error. Baud is hardcoded*/
@@ -123,8 +128,7 @@ void uart_init(int baud){
 }
 
 int uart_put_byte(char c){
-  int state = save_interrupt_state_and_disable(); /* Logic for enabling or not*/
-
+  state = save_interrupt_state_and_disable();
   if (TransmitBuffer.count == size_of_Queue){
     restore_interrupt_state(state);
     return -1;
@@ -132,17 +136,16 @@ int uart_put_byte(char c){
 
   struct uart_reg_map *uart = UART2_BASE;
   if (TransmitBuffer.count == 0){
+    
     enqueue(c, &TransmitBuffer);
-
-    if (!state){
-      uart -> CR1 |= CR1_TXEIE;
-    }
+    
+    uart -> CR1 |= CR1_TXEIE;
+  
 
   }
   else{
     enqueue(c, &TransmitBuffer);
   }
-
   restore_interrupt_state(state);
   return 0;
   
@@ -150,6 +153,7 @@ int uart_put_byte(char c){
 }
 
 void USART2_TX_IRQHandler() {
+  state = save_interrupt_state_and_disable();
   struct uart_reg_map *uart = UART2_BASE;
   char c;
   if (TransmitBuffer.count == 1){
@@ -160,14 +164,13 @@ void USART2_TX_IRQHandler() {
     c = dequeue(&TransmitBuffer);
   }
   uart -> DR = c;
+  restore_interrupt_state(state);
   return;
 }
 
 int uart_get_byte(char *c){
-  int state = save_interrupt_state_and_disable(); /* Logic for enabling or not*/
 
   if (ReceiveBuffer.count == 0){
-    restore_interrupt_state(state);
     return -1;
   }
   
@@ -175,23 +178,19 @@ int uart_get_byte(char *c){
   char str;
   if (ReceiveBuffer.count == size_of_Queue){
     str = dequeue(&ReceiveBuffer);
-
-    
-    if (!state){
     uart -> CR1 |= CR1_RXNEIE;
-    }
-
   }
   else{
+    
     str = dequeue(&ReceiveBuffer);
   }
   *c = str;
 
-  restore_interrupt_state(state);
   return 0;
 }
 
 void USART2_RX_IRQHandler() {
+  
   struct uart_reg_map *uart = UART2_BASE;
 
   char c = uart -> DR & 0xFF;
@@ -203,6 +202,7 @@ void USART2_RX_IRQHandler() {
   else{
     enqueue(c, &ReceiveBuffer);
   }
+  
   return;
 }
 
@@ -220,8 +220,8 @@ void USART2_IRQHandler() {
   else {
     USART2_RX_IRQHandler();
     }
-
   nvic_clear_pending(38);  
+  
 }
 
 void uart_flush(){
