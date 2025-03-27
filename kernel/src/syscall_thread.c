@@ -11,6 +11,9 @@
 #include "syscall_thread.h"
 #include "syscall_mutex.h"
 #include <arm.h>
+#include <mpu.h>
+#include <systick.h>
+#include <syscall.h>
 
 /** @brief      Initial XPSR value, all 0s except thumb bit. */
 #define XPSR_INIT 0x1000000
@@ -64,6 +67,7 @@ typedef struct {
 typedef struct global_threads_info 
 {
     uint32_t max_threads;
+    uint32_t max_mutexes;
     uint32_t stack_size;
     uint32_t tick_counter;
     uint32_t current_thread; // index of the current thread in array
@@ -123,10 +127,11 @@ global_threads_info_t global_threads_info;
   4. Returns the result
 */
 int ub_test(int C, int T){
+  int max_threads = global_threads_info.max_threads;
   float utilization = (float)C/T;
   int compute, period = 0;
   int count = 1;
-  for (int index = 0; index < 14; index ++){
+  for (int index = 0; index < max_threads; index ++){
     if (TCB_ARRAY[index].state == NEW || TCB_ARRAY[index].state == DONE){continue;} // Uninitialized Thread Index in TCB Array
     compute = TCB_ARRAY[index].computation_time;
     period = TCB_ARRAY[index].period;
@@ -162,10 +167,12 @@ int thread_scheduler(){
   }
 
   /* Decrement/reset all values of thread_time_left_in_period and reset state if necessary */
-  for (int p = 0; p < 14; p ++){
-    int time_left_in_period = global_threads_info.thread_time_left_in_T[p] - 1;
-    global_threads_info.thread_time_left_in_T[p] = time_left_in_period;
-
+  for (uint32_t p = 0; p < 16; p ++){
+    int time_left_in_period = 0;
+    if (p < global_threads_info.max_threads){
+      time_left_in_period = global_threads_info.thread_time_left_in_T[p] - 1;
+      global_threads_info.thread_time_left_in_T[p] = time_left_in_period;
+    } 
     if (time_left_in_period == 0 && (TCB_ARRAY[p].state == WAITING || TCB_ARRAY[p].state == RUNNING)){
       global_threads_info.thread_time_left_in_T[p] = TCB_ARRAY[p].period;
       TCB_ARRAY[p].state = READY;
@@ -227,12 +234,12 @@ void *pendsv_c_handler(void *context_ptr){
   5. Sets up default values in the precomputed msp that contain psp and r4, etc, error code in lr.
 */
 int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, uint32_t max_mutexes){
-  
+  global_threads_info.max_mutexes = max_mutexes;
   global_threads_info.max_threads = max_threads;
-  global_threads_info.stack_size = mm_log2ceil_size(stack_size);
+  global_threads_info.stack_size = (uint32_t) mm_log2ceil_size(stack_size);
 
   //check if the stack size and if max threads input are valid < 32KB
-  if(max_threads > 16 || max_threads * stack_size * 4 > 32 * 1024) {
+  if(max_threads > 14 || max_threads * stack_size * 4 > 32 * 1024) {
       return -1;
   }
 
@@ -241,17 +248,15 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   //allocate space for kernel and user stacks
   uint32_t *k_stack_top = (uint32_t *) &__thread_k_stacks_top;
   uint32_t *u_stack_top = (uint32_t *) &__thread_u_stacks_top;
-  uint32_t *k_stack_low = (uint32_t *) &__thread_k_stacks_low;
-  uint32_t *u_stack_low = (uint32_t *) &__thread_u_stacks_low;
 
   //Q: the handout said that kernel and user stacks are initiated differently?
-  for(int i = 0; i < max_threads; i++) {
+  for(uint32_t i = 0; i < max_threads+2; i++) {
     // TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4);
     // ((pushed_callee_stack_frame *)TCB_ARRAY[i].msp)->PSP = u_stack_top - (i * global_threads_info.stack_size * 4);
 
 
-    TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(pushed_callee_stack_frame);
-    TCB_ARRAY[i].msp -> PSP = u_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(interrupt_stack_frame); // Why cast to pushed_callee_stack?
+    TCB_ARRAY[i].msp = (pushed_callee_stack_frame *)(k_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(pushed_callee_stack_frame));
+    TCB_ARRAY[i].msp -> PSP = (u_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(interrupt_stack_frame)); // Why cast to pushed_callee_stack?
     TCB_ARRAY[i].state = NEW; //Q: what state should the thread be set to in init?
   }
 
@@ -263,7 +268,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   // ?? I think idle thread goes into second to last priority and default goes into last
   // Also should set the default thread to be running
 
-  int prio_idle = max_threads - 2;
+  int prio_idle = max_threads;
   TCB_ARRAY[prio_idle].computation_time = 0x0;
   TCB_ARRAY[prio_idle].period = 0x0;
   TCB_ARRAY[prio_idle].priority = prio_idle;
@@ -300,7 +305,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
 
 
   // Initiating default thread values
-  int prio_default = max_threads - 1;
+  int prio_default = max_threads + 1;
   TCB_ARRAY[prio_default].computation_time = 0x0;
   TCB_ARRAY[prio_default].period = 0x0;
   TCB_ARRAY[prio_default].priority = prio_default;
@@ -333,6 +338,7 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
 
   uint32_t *user_sp = TCB_ARRAY[prio].msp->PSP;
   
+
   interrupt_stack_frame *isf_u = (interrupt_stack_frame *) user_sp;
   isf_u->r0 = (uint32_t) vargp;
   isf_u->r1 = 0;
@@ -356,6 +362,8 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
   TCB_ARRAY[prio].msp->PSP = user_sp;
 
   TCB_ARRAY[prio].state = READY;
+
+  TCB_ARRAY[prio].svc_status = 0;
 
   /* Setting New Thread System Time Variables */
   global_threads_info.thread_absolute_time_start[prio] = sys_get_time();
@@ -403,9 +411,9 @@ uint32_t sys_thread_time(){
 
 /* Permanently deschedules the thread its called from. Checks if valid to kill this particular thread */
 void sys_thread_kill(){
-  int priority = sys_get_priority();
+  uint32_t priority = sys_get_priority();
   if (priority == global_threads_info.max_threads-1){ // Default Thread Is Called It
-    sys_exit();
+    sys_exit(1);
   }
   else if(priority == global_threads_info.max_threads-2){// Idle Thread is Calling It 
     // run default idle

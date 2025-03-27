@@ -52,6 +52,16 @@
 
 
 /*
+ * delay: a time interval we add after some reads to debounce keypad presses
+ */
+void delay()
+{
+    // systick_delay(1000);
+    return;
+};
+
+
+/*
  * set_col: setting corresponding pin on keypad to high
  *
  * col -- int from 1 to 3 which represends column number
@@ -192,12 +202,4 @@ char keypad_read() {
     return pressed;
 }
 
-/*
- * delay: a time interval we add after some reads to debounce keypad presses
- */
-void delay()
-{
-    systick_delay(1000);
-    return;
-};
 

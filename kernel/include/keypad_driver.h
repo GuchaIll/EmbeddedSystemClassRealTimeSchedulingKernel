@@ -17,4 +17,6 @@ void keypad_init();
  */
 char keypad_read();
 
+void delay();
+
 #endif /* _KEYPAD_DRIVER_H_ */

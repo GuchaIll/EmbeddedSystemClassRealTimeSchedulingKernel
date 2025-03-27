@@ -111,6 +111,11 @@ _nmi_ : bkpt
 _hard_fault_ : bkpt
 
 .thumb_func
+_mm_fault_:
+  bkpt
+
+
+.thumb_func
 _bus_fault_ : bkpt
 
 .thumb_func
