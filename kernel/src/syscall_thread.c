@@ -166,9 +166,12 @@ int thread_scheduler(){
   if (time_left_in_compute == 0){ 
     TCB_ARRAY[curr_running].state = WAITING;
   }
+  else{
+    TCB_ARRAY[curr_running].state = READY;
+  }
 
   /* Decrement/reset all values of thread_time_left_in_period and reset state if necessary */
-  for (uint32_t p = 0; p < max_threads+2; p ++){
+  for (uint32_t p = 0; p < max_threads+1; p ++){
     int time_left_in_period = global_threads_info.thread_time_left_in_T[p] - 1;
     global_threads_info.thread_time_left_in_T[p] = time_left_in_period;
     
@@ -180,11 +183,12 @@ int thread_scheduler(){
   }
   
   /* Pick next thread to run based on algorithm and current thread with status Running */
-  int priority = 0;
-  while (TCB_ARRAY[priority].state != READY){
-    priority ++;
+  for (uint32_t priority = 0; priority < max_threads; priority ++){
+    if (TCB_ARRAY[priority].state == READY){
+      return priority;
+    }
   }
-  return priority;
+  return max_threads;
 }
 
 /* pendsv_c_handler(context_ptr)
@@ -257,16 +261,20 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   uint32_t *u_stack_top = (uint32_t *) &__thread_u_stacks_top;
 
   //Q: the handout said that kernel and user stacks are initiated differently?
-  for(uint32_t i = 0; i < max_threads+2; i++) {
-    // TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4);
-    // ((pushed_callee_stack_frame *)TCB_ARRAY[i].msp)->PSP = u_stack_top - (i * global_threads_info.stack_size * 4);
-
-
-    TCB_ARRAY[i].msp = (pushed_callee_stack_frame *)(k_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(pushed_callee_stack_frame));
-    TCB_ARRAY[i].msp -> PSP = (u_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(interrupt_stack_frame)); // Why cast to pushed_callee_stack?
-    TCB_ARRAY[i].state = NEW; //Q: what state should the thread be set to in init?
-    TCB_ARRAY[i].svc_status = 0; // Might want to set all svc_status to 0?
-  }
+   for(uint32_t i = 0; i < max_threads+2; i++) {
+     // TCB_ARRAY[i].msp = k_stack_top - (i * global_threads_info.stack_size * 4);
+     // ((pushed_callee_stack_frame *)TCB_ARRAY[i].msp)->PSP = u_stack_top - (i * global_threads_info.stack_size * 4);
+ 
+     uint32_t *aligned_k_stack_top = k_stack_top - (i * global_threads_info.stack_size ) - sizeof(pushed_callee_stack_frame) / sizeof(uint32_t);
+     uint32_t *aligned_u_stack_top = u_stack_top - (i * global_threads_info.stack_size ) - sizeof(interrupt_stack_frame) / sizeof(uint32_t);
+     
+     TCB_ARRAY[i].msp = (pushed_callee_stack_frame *)aligned_k_stack_top;
+     TCB_ARRAY[i].msp->PSP = aligned_u_stack_top;
+     //TCB_ARRAY[i].msp = (pushed_callee_stack_frame *)(k_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(pushed_callee_stack_frame));
+     //TCB_ARRAY[i].msp -> PSP = (u_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(interrupt_stack_frame)); // Why cast to pushed_callee_stack?
+     TCB_ARRAY[i].state = NEW; //Q: what state should the thread be set to in init?
+     TCB_ARRAY[i].svc_status = 0; // Might want to set all svc_status to 0?
+   }
 
 
   //Initialize the idle thread
