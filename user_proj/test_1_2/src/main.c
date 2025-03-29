@@ -31,7 +31,7 @@ void thread_0( UNUSED void *vargp ) {
 
     if ( t < THREAD_T_MS * cnt ) {
       printf( "Failed. Should have woken up at/after t = %d\n", THREAD_T_MS * cnt );
-      printf( "Woke up at t = %d", t );
+      printf( "Woke up at t = %d\n", t );
       while ( 1 );
     }
 

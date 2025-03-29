@@ -64,13 +64,17 @@ void systick_delay(UNUSED uint32_t ticks) {
 uint32_t systick_get_ticks() {
     return total_count;
 }
-
+volatile int sysTickFlag = 0;
+void clear_systick_flag() {
+    sysTickFlag = 0;
+}
 /* Called every millisecond*/
 /* Calls pendSV -
     Programming maneual Page 225 talks about the ICSR register bits 28 for 
     setting bit and 27 for clearing from the System Control Block/ nvm thats given to us*/
 
 void systick_c_handler() {
+    sysTickFlag = 1;
     total_count = total_count + 1;
     pend_pendsv();
 }

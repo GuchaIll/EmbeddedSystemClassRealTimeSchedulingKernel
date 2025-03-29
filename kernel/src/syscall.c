@@ -38,13 +38,15 @@ void *sys_sbrk(int incr){
 /* Writes to STDOUT */
 int sys_write(int file, char *ptr, int len){
   if (file != 1) {return -1;}
-  int curr_ind = 0;
-  while (curr_ind < len){
-    if (0 == uart_put_byte(ptr[curr_ind])){
-      curr_ind ++;
-    }
-  }
-  
+  //int curr_ind = 0;
+  //while (curr_ind < len){
+   // if (0 == uart_put_byte(ptr[curr_ind])){
+  //    curr_ind ++;
+  //  }
+ // }
+ for(int i = 0; i < len; i++){
+   while(uart_put_byte(ptr[i]) );
+ }
   return len;
 }
 

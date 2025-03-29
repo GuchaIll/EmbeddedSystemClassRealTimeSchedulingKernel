@@ -151,7 +151,7 @@ int ub_test(int C, int T){
   return -1;
 }
 
-
+extern uint32_t sysTickFlag;
 /* thread_scheduler()
   1. Reduces the compute time left of the currently running thread 
   2  If compute time is 0, then switch to WAITING state for the thread
@@ -173,11 +173,16 @@ int thread_scheduler(){
   if (runningThreads > 1){
     printk("Error: More than one thread is running\n");
   }
-
+  
   uint32_t curr_running = sys_get_priority();
   uint32_t max_threads = global_threads_info.max_threads;
   int time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running];
+  
+  //Perform timer and compute time changes only if pend_sv is called by systick
 
+  if(sysTickFlag == 1){
+    
+  
   //Decrement Computation time if it is not the idle or default thread
   if(curr_running < max_threads){
    
@@ -204,22 +209,25 @@ int thread_scheduler(){
      if(TCB_ARRAY[p].state == WAITING || TCB_ARRAY[p].state == READY || TCB_ARRAY[p].state == RUNNING)
      {
       
-      int time_left_in_curr_period = global_threads_info.thread_time_left_in_T[p] - 1;
-      global_threads_info.thread_time_left_in_T[p] = time_left_in_curr_period;
-
+     
+      int time_left_in_curr_period = global_threads_info.thread_time_left_in_T[p];
         if(time_left_in_curr_period == 0){
           //encountering usage fault upon period reset for default thread
           global_threads_info.thread_time_left_in_C[p] = TCB_ARRAY[p].computation_time;
-          global_threads_info.thread_time_left_in_T[p] = TCB_ARRAY[p].period;
+          global_threads_info.thread_time_left_in_T[p] = TCB_ARRAY[p].period ;
 
           TCB_ARRAY[p].state = READY;
           global_threads_info.waiting_threads[p] = 400;
           global_threads_info.ready_threads[p] = p;
         }
-
+         time_left_in_curr_period = global_threads_info.thread_time_left_in_T[p] - 1;
+        global_threads_info.thread_time_left_in_T[p] = time_left_in_curr_period;
      
      }
   }
+  //clear systick flag
+  clear_systick_flag();
+}
   
   /* Pick next thread to run based on algorithm and current thread with status Running */
   for (uint32_t priority = 0; priority < max_threads; priority ++){
