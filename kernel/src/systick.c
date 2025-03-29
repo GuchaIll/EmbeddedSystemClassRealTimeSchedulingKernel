@@ -71,6 +71,6 @@ uint32_t systick_get_ticks() {
     setting bit and 27 for clearing from the System Control Block/ nvm thats given to us*/
 
 void systick_c_handler() {
-    total_count += 1;
+    total_count = total_count + 1;
     pend_pendsv();
 }
