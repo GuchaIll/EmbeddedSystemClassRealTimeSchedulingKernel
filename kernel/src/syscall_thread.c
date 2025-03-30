@@ -78,7 +78,7 @@ typedef struct global_threads_info
 
     uint32_t thread_time_left_in_C[16]; // array holding how many more ticks the corresponding thread has run in period
     uint32_t thread_time_left_in_T[16]; // array holding how many more ticks the corresponding thread has left until period end
-    uint32_t thread_absolute_time_start[16]; // array holding at what tick the corresponding thread started
+    uint32_t thread_time[16]; // array holding at what tick the corresponding thread started
 
     uint32_t ready_threads[16]; // array holding the ready threads
     uint32_t waiting_threads[16]; // number of ready threads
@@ -151,7 +151,10 @@ int ub_test(int C, int T){
   return -1;
 }
 
+/* sysTickFlag:
+  Flag to keep track of context switching not started by the systick so as to not decrement C or T when that happens*/
 extern uint32_t sysTickFlag;
+
 /* thread_scheduler()
   1. Reduces the compute time left of the currently running thread 
   2  If compute time is 0, then switch to WAITING state for the thread
@@ -162,84 +165,57 @@ extern uint32_t sysTickFlag;
 */
 int thread_scheduler(){
   /* Get currently running thread */
-  //remove this line at the end, check thread running validity
-  int runningThreads = 0;
-  for(uint32_t i = 0; i < global_threads_info.max_threads; i++){
+  uint32_t curr_running = sys_get_priority();
+  uint32_t max_threads = global_threads_info.max_threads;
+  
+
+  // Sets all to ready
+  for(uint32_t i = 0; i < global_threads_info.max_threads + 2; i++){
     if (TCB_ARRAY[i].state == RUNNING){
-      runningThreads ++;
+      TCB_ARRAY[i].state = READY;
     }
   }
 
-  if (runningThreads > 1){
-    printk("Error: More than one thread is running\n");
-  }
-  
-  uint32_t curr_running = sys_get_priority();
-  uint32_t max_threads = global_threads_info.max_threads;
-  int time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running];
-  
   //Perform timer and compute time changes only if pend_sv is called by systick
 
   if(sysTickFlag == 1){
-    
-  
-  //Decrement Computation time if it is not the idle or default thread
-  if(curr_running < max_threads){
-   
-    time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running] - 1;
-    global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
-    //move to waiting state if computation time is exhaunsted
-    if (time_left_in_compute == 0){ 
-      TCB_ARRAY[curr_running].state = WAITING;
-      global_threads_info.ready_threads[curr_running] = 400;
-      global_threads_info.waiting_threads[curr_running] = curr_running;
+    if (curr_running != max_threads && curr_running != max_threads + 1){
+      int time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running] - 1;
+      global_threads_info.thread_time[curr_running] ++;
+      if (time_left_in_compute == 0){
+        time_left_in_compute = TCB_ARRAY[curr_running].computation_time;
+        TCB_ARRAY[curr_running].state = WAITING;
+      }
+      global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
     }
-    //else{
-    //  TCB_ARRAY[curr_running].state = READY;
-   // }
-    
-  }
-  else if(curr_running == max_threads || curr_running == max_threads + 1){
-    TCB_ARRAY[curr_running].state = READY;
-  }
+    else{
+      TCB_ARRAY[curr_running].state = RUNNING;
+    }
 
-  /* Update period time of all threads
-   */
-  for (uint32_t p = 0; p < max_threads; p ++){
-     if(TCB_ARRAY[p].state == WAITING || TCB_ARRAY[p].state == READY || TCB_ARRAY[p].state == RUNNING)
-     {
-      
-     
-      int time_left_in_curr_period = global_threads_info.thread_time_left_in_T[p];
-        if(time_left_in_curr_period == 0){
-          //encountering usage fault upon period reset for default thread
-          global_threads_info.thread_time_left_in_C[p] = TCB_ARRAY[p].computation_time;
-          global_threads_info.thread_time_left_in_T[p] = TCB_ARRAY[p].period ;
-
-          TCB_ARRAY[p].state = READY;
-          global_threads_info.waiting_threads[p] = 400;
-          global_threads_info.ready_threads[p] = p;
+    int time_left_in_period;
+    for (uint32_t i = 0; i < global_threads_info.max_threads; i ++){
+      if (TCB_ARRAY[i].state == READY || TCB_ARRAY[i].state == WAITING){
+        time_left_in_period = global_threads_info.thread_time_left_in_T[i] - 1;
+        if (time_left_in_period == 0){
+          TCB_ARRAY[i].state = READY;
+          time_left_in_period = TCB_ARRAY[i].period;
+          global_threads_info.thread_time_left_in_C[i] = TCB_ARRAY[i].computation_time;
         }
-         time_left_in_curr_period = global_threads_info.thread_time_left_in_T[p] - 1;
-        global_threads_info.thread_time_left_in_T[p] = time_left_in_curr_period;
-     
-     }
-  }
-  //clear systick flag
-  clear_systick_flag();
+        global_threads_info.thread_time_left_in_T[i] = time_left_in_period;
+      }
+    }
+    
+    clear_systick_flag();
 }
   
   /* Pick next thread to run based on algorithm and current thread with status Running */
   for (uint32_t priority = 0; priority < max_threads; priority ++){
-    if (TCB_ARRAY[priority].state == READY || TCB_ARRAY[priority].state == RUNNING){
-      //if the default thread is currently running and we want to switch to user created thread, set it to be ready
-      //if((uint32_t)sys_get_priority() == global_threads_info.max_threads+1){
-       // TCB_ARRAY[global_threads_info.max_threads + 1].state = READY;
-      //}
+    if (TCB_ARRAY[priority].state == READY){
       return priority;
     }
   }
-  return max_threads;
+  if (TCB_ARRAY[max_threads].state != DONE) {return max_threads;}
+  return max_threads + 1;
 }
 
 /* pendsv_c_handler(context_ptr)
@@ -286,17 +262,17 @@ void *pendsv_c_handler(void *context_ptr){
     global_threads_info.waiting_threads[priority] = 400;
     global_threads_info.ready_threads[priority] = 400;
 
-  
-  
     /* Load pointer to TCB to return value*/
     return next_TCB -> msp;
 }
 
+/* Our default idle function just not written in Assembly*/
 void default_idle_fn(){
   while(1){
     wait_for_interrupt();
   }
 }
+
 /* sys_thread_init(max_threads, stack_size, idle_fn, max_mutexes
   1. Updates global thread values such as max_threads and stack size
   2. Computes all psp and msp pointers for threads to be run
@@ -381,7 +357,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   TCB_ARRAY[prio_idle].state = READY;
   TCB_ARRAY[prio_idle].svc_status = 1; //clown moment
 
-  global_threads_info.thread_absolute_time_start[prio_idle] = 0;
+  global_threads_info.thread_time[prio_idle] = 0;
   global_threads_info.thread_time_left_in_T[prio_idle] = 1;
   global_threads_info.thread_time_left_in_C[prio_idle] = 1;
 
@@ -393,7 +369,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   TCB_ARRAY[prio_default].state = RUNNING;
   TCB_ARRAY[prio_default].svc_status = 1; //clown moment
 
-  global_threads_info.thread_absolute_time_start[prio_default] = 0;
+  global_threads_info.thread_time[prio_default] = 0;
   global_threads_info.thread_time_left_in_T[prio_default] = 1;
   global_threads_info.thread_time_left_in_C[prio_default] = 1;
 
@@ -416,7 +392,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   4. Sets up the stack pointed to by the threads PSP with interrupt stack frame and fills it in with function pointer and vargp
   5. Sets up the global thread info values to include things like appropriate thread absolute start time, and time left in period. 
 */
-int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
+int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T, void *vargp){
 
   if(prio >= global_threads_info.max_threads || TCB_ARRAY[prio].state == READY) {
     return -1;
@@ -438,7 +414,7 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
 
   interrupt_stack_frame * user_sp = (interrupt_stack_frame *)TCB_ARRAY[prio].msp->PSP;
   
-  user_sp->r0 = (uint32_t) &vargp;
+  user_sp->r0 = (uint32_t) vargp;
   user_sp->r1 = 0;
   user_sp->r2 = 0;
   user_sp->r3 = 0;
@@ -461,7 +437,7 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T,void *vargp){
   TCB_ARRAY[prio].state = READY;
 
   /* Setting New Thread System Time Variables */
-  global_threads_info.thread_absolute_time_start[prio] = sys_get_time();
+  global_threads_info.thread_time[prio] = 0;
   global_threads_info.thread_time_left_in_T[prio] = T;
   global_threads_info.thread_time_left_in_C[prio] = C;
   /* END NEW */
@@ -499,7 +475,7 @@ uint32_t sys_get_time(){
 // Gets priority and indexes into global thread info
 uint32_t sys_thread_time(){
   int priority = sys_get_priority();
-  int abs_thread_time = global_threads_info.thread_absolute_time_start[priority];
+  int abs_thread_time = global_threads_info.thread_time[priority];
   return abs_thread_time;
 }
 

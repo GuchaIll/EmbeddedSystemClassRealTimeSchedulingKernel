@@ -25,6 +25,7 @@ struct stack_frame_map {
     volatile uint32_t LR;  
     volatile uint32_t PC; 
     volatile uint32_t PSR;
+    volatile uint32_t fifth_arg;
 };
 
 /*
@@ -39,13 +40,13 @@ void svc_c_handler( uint32_t * stack_p ) {
   uint32_t svc_instruction = *(((uint16_t*)pc_pointer) - 1);
   /* Extracting Lower 8 Bits Which Are SVC Number*/
   uint32_t svc_number = (svc_instruction & 0xFF);
-  int first_arg = (stack -> R0);
-  int second_arg = (stack -> R1);
-  int third_arg = (stack -> R2);
-  int fourth_arg = (stack -> R3);
+  uint32_t first_arg = (stack -> R0);
+  uint32_t second_arg = (stack -> R1);
+  uint32_t third_arg = (stack -> R2);
+  uint32_t fourth_arg = (stack -> R3);
   
   /* Theoretically one block above PSR */
-  int fifth_arg = (stack -> PSR + 1);
+  uint32_t fifth_arg = (stack -> fifth_arg);
 
   int res_write;
   void* res_sbrk;
