@@ -13,37 +13,37 @@
 #include <keypad_driver.h>
 #include <systick.h>
 
-/** *
- * COL configurations
- * 
-*/
+/**
+ * @brief GPIO port and pin configurations for keypad columns.
+ */
+//@{
+#define KEYPAD_COL1_PORT GPIO_B         /**< GPIO port for column 1. */
+#define KEYPAD_COL1_NUMBER 10           /**< GPIO pin number for column 1. */
 
-#define KEYPAD_COL1_PORT GPIO_B
-#define KEYPAD_COL1_NUMBER 10
+#define KEYPAD_COL2_PORT GPIO_A         /**< GPIO port for column 2. */
+#define KEYPAD_COL2_NUMBER 10           /**< GPIO pin number for column 2. */
 
-#define KEYPAD_COL2_PORT GPIO_A
-#define KEYPAD_COL2_NUMBER 10
+#define KEYPAD_COL3_PORT GPIO_A         /**< GPIO port for column 3. */
+#define KEYPAD_COL3_NUMBER 9            /**< GPIO pin number for column 3. */
+//@}
 
-#define KEYPAD_COL3_PORT GPIO_A
-#define KEYPAD_COL3_NUMBER 9
 
-/** *
- * ROW configurations
- * 
-*/
+/**
+ * @brief GPIO port and pin configurations for keypad rows.
+ */
+//@{
+#define KEYPAD_ROW1_PORT GPIO_B         /**< GPIO port for row 1. */
+#define KEYPAD_ROW1_NUMBER 5            /**< GPIO pin number for row 1. */
 
-#define KEYPAD_ROW1_PORT GPIO_B
-#define KEYPAD_ROW1_NUMBER 5
+#define KEYPAD_ROW2_PORT GPIO_B         /**< GPIO port for row 2. */
+#define KEYPAD_ROW2_NUMBER 6             /**< GPIO pin number for row 2. */
 
-#define KEYPAD_ROW2_PORT GPIO_B
-#define KEYPAD_ROW2_NUMBER 6
+#define KEYPAD_ROW3_PORT GPIO_C         /**< GPIO port for row 3. */
+#define KEYPAD_ROW3_NUMBER 7            /**< GPIO pin number for row 3. */
 
-#define KEYPAD_ROW3_PORT GPIO_C
-#define KEYPAD_ROW3_NUMBER 7
-
-#define KEYPAD_ROW4_PORT GPIO_A
-#define KEYPAD_ROW4_NUMBER 8
-
+#define KEYPAD_ROW4_PORT GPIO_A         /**< GPIO port for row 4. */
+#define KEYPAD_ROW4_NUMBER 8            /**< GPIO pin number for row 4. */
+//@}
 
 /* Global Variables For State: For debouncing could check every 5
    milliseconds after returning from read_keypad with a non null char,
@@ -54,10 +54,10 @@
 
 
 
-/*
- * set_col: setting corresponding pin on keypad to high
+/**
+ * @brief Sets the specified column pin to high.
  *
- * col -- int from 1 to 3 which represends column number
+ * @param[in] col Column number (1 to 3).
  */
 void set_col(int col){
     switch(col)
@@ -76,10 +76,11 @@ void set_col(int col){
     }
 }
 
-/*
- * read_row: reading corresponding pin on keypad
+/**
+ * @brief Reads the state of the specified row pin.
  *
- * row -- int from 1 to 4 which represends row number
+ * @param[in] row Row number (1 to 4).
+ * @return 1 if the row pin is high, 0 if it is low, or -1 for invalid row.
  */
 int read_row(int row){
     int a;
@@ -99,8 +100,10 @@ int read_row(int row){
     }
 }
 
-/*
- * keypad_init: initializing desired pins to their settings based on row or col
+/**
+ * @brief Initializes the GPIO pins for the keypad.
+ *
+ * Configures the column pins as output and the row pins as input with pull-down resistors.
  */
 void keypad_init() {
     /* Col Inits*/
@@ -116,8 +119,12 @@ void keypad_init() {
     return;
 }
 
-/*
- * keypad_read: reading character val based on keypad press
+/**
+ * @brief Reads the character corresponding to a keypad press.
+ *
+ * Scans the keypad by setting each column high and checking the rows for a press.
+ *
+ * @return The character corresponding to the pressed key, or '\0' if no key is pressed.
  */
 char keypad_read() {
     char pressed = '\0';
@@ -196,8 +203,11 @@ char keypad_read() {
 }
 
 
-/*
- * delay: a time interval we add after some reads to debounce keypad presses
+/**
+ * @brief Adds a delay to debounce keypad presses.
+ *
+ * This function introduces a time interval after a key press is detected
+ * to prevent multiple detections of the same press.
  */
 void delay()
 {

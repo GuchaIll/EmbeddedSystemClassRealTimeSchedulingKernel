@@ -15,16 +15,16 @@
 
 /** @brief Defining the i2c register map */
 struct i2c_reg_map {
-    volatile u_int32_t CR1; // Control Register 1
-    volatile u_int32_t CR2; // Control Register 2
-    volatile u_int32_t OAR1; // Own Address Register 1
-    volatile u_int32_t OAR2; // Own Address Register 2
-    volatile u_int32_t DR; // Data Register
-    volatile u_int32_t SR1; // Status Register 1
-    volatile u_int32_t SR2; // Status Register 2
-    volatile u_int32_t CCR; // Clock Control Register
-    volatile u_int32_t TRISER; // T RISE Register (Maximum rise time in Fm/Sm mode (Master mode))
-    volatile u_int32_t FLTR;  // Noise Filter Register
+    volatile u_int32_t CR1; /**< Control Register 1. */
+    volatile u_int32_t CR2; /**< Control Register 2. */
+    volatile u_int32_t OAR1; /**< Own Address Register 1. */
+    volatile u_int32_t OAR2; /**< Own Address Register 2. */
+    volatile u_int32_t DR; /**< Data Register. */
+    volatile u_int32_t SR1; /**< Status Register 1. */
+    volatile u_int32_t SR2; /**< Status Register 2. */
+    volatile u_int32_t CCR; /**< Clock Control Register. */
+    volatile u_int32_t TRISER; /**< Maximum rise time register in Fm/Sm mode (Master mode). */
+    volatile u_int32_t FLTR; /**< Noise Filter Register. */
 };
 
 /** @brief RCC I2C1 Enable*/
@@ -69,14 +69,17 @@ struct i2c_reg_map {
 /** @brief TXE Bit in SR1 */
 #define I2C_CHECK_TXE_EV8 (1 << 7)
 
-/*
+
+ /**
+ * @brief Initializes the I2C peripheral.
+ *
+ * Configures the GPIO pins for I2C communication, sets the clock rate, and enables the I2C peripheral.
  * i2c_master_init: I2C initialization function
- * 
  * Sets B8 and B9 to SCL and SDA respectively
- * 
  * clk -- Any 16 bit value
- * 
  * Note: clk input is not used as we can hardcode the rate
+ * 
+ * @param[in] clk The clock rate (not used, hardcoded in the implementation).
  */
 void i2c_master_init(uint16_t clk){
     (void) clk; /* Supressing unused variable error since we can hardcode I2C clock rate */
@@ -96,8 +99,10 @@ void i2c_master_init(uint16_t clk){
     return;
 }
 
-/*
- * i2c_master_start: I2C start function
+/**
+ * @brief Sends a START condition on the I2C bus.
+ *
+ * This function initiates communication by sending a START condition and waits until the START condition is acknowledged.
  */
 void i2c_master_start() {
     struct i2c_reg_map * i2c = I2C_BASE_ADDRESS;
@@ -106,8 +111,10 @@ void i2c_master_start() {
     return;
 }
 
-/*
- * i2c_master_stop: I2C stop function
+/**
+ * @brief Sends a STOP condition on the I2C bus.
+ *
+ * This function terminates communication by sending a STOP condition.
  */
 void i2c_master_stop() {
     struct i2c_reg_map * i2c = I2C_BASE_ADDRESS;
@@ -115,14 +122,16 @@ void i2c_master_stop() {
     return;
 }
 
-/*
- * i2c_master_write: I2C write from master to slave function
- * 
- * buf -- pointer to array of vals that should be sent to slave
- * 
- * len -- length of the array of vals
- * 
- * slave_addr -- address of slave
+
+ /**
+ * @brief Writes data from the master to a slave device on the I2C bus.
+ *
+ * Sends the specified buffer of data to the slave device at the given address.
+ *
+ * @param[in] buf Pointer to the buffer containing the data to send.
+ * @param[in] len Length of the buffer.
+ * @param[in] slave_addr Address of the slave device.
+ * @return 0 on success.
  */
 int i2c_master_write(uint8_t *buf, uint16_t len, uint8_t slave_addr){
     struct i2c_reg_map * i2c = I2C_BASE_ADDRESS;
@@ -146,7 +155,16 @@ int i2c_master_write(uint8_t *buf, uint16_t len, uint8_t slave_addr){
     return 0;
 }
 
-/** @brief Note: not fully implemented */
+/**
+ * @brief Reads data from a slave device on the I2C bus.
+ *
+ * Reads the specified number of bytes from the slave device into the provided buffer.
+ *
+ * @param[out] buf Pointer to the buffer to store the received data.
+ * @param[in] len Number of bytes to read.
+ * @param[in] slave_addr Address of the slave device.
+ * @return The first byte of the received data.
+ */
 int i2c_master_read(uint8_t *buf, uint16_t len, uint8_t slave_addr){
     struct i2c_reg_map * i2c = I2C_BASE_ADDRESS;
     i2c_master_start();

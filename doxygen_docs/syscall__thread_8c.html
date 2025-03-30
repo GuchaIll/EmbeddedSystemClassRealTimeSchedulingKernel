@@ -96,6 +96,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structinterrupt__stack__frame.html">interrupt_stack_frame</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the stack frame pushed onto the stack during an interrupt.  <a href="structinterrupt__stack__frame.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structglobal__threads__info__t.html">global_threads_info_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global thread information for tracking timing, priorities, and stack limits.  <a href="structglobal__threads__info__t.html#details">More...</a><br /></td></tr>
@@ -156,8 +157,8 @@ Functions</h2></td></tr>
 <tr class="memitem:ac54104218aaaba481bd42968a6045691"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#ac54104218aaaba481bd42968a6045691">sys_thread_create</a> (void *fn, uint32_t prio, uint32_t C, uint32_t T, void *vargp)</td></tr>
 <tr class="memdesc:ac54104218aaaba481bd42968a6045691"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new thread.  <a href="syscall__thread_8c.html#ac54104218aaaba481bd42968a6045691">More...</a><br /></td></tr>
 <tr class="separator:ac54104218aaaba481bd42968a6045691"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0726d2166701a485c555e6b7f7af3b60"><td class="memItemLeft" align="right" valign="top"><a id="a0726d2166701a485c555e6b7f7af3b60"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>sys_scheduler_start</b> (uint32_t frequency)</td></tr>
+<tr class="memitem:a0726d2166701a485c555e6b7f7af3b60"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a0726d2166701a485c555e6b7f7af3b60">sys_scheduler_start</a> (uint32_t frequency)</td></tr>
+<tr class="memdesc:a0726d2166701a485c555e6b7f7af3b60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the scheduler.  <a href="syscall__thread_8c.html#a0726d2166701a485c555e6b7f7af3b60">More...</a><br /></td></tr>
 <tr class="separator:a0726d2166701a485c555e6b7f7af3b60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b4f86fe10ac2c90ce8158872aac7ce2"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a8b4f86fe10ac2c90ce8158872aac7ce2">sys_get_priority</a> ()</td></tr>
 <tr class="memdesc:a8b4f86fe10ac2c90ce8158872aac7ce2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the priority of the currently running thread.  <a href="syscall__thread_8c.html#a8b4f86fe10ac2c90ce8158872aac7ce2">More...</a><br /></td></tr>
@@ -174,33 +175,28 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>sys_scheduler_start</b
 <tr class="memitem:a2a3a3fb472158a93e59df836b9935b54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a2a3a3fb472158a93e59df836b9935b54">sys_wait_until_next_period</a> ()</td></tr>
 <tr class="memdesc:a2a3a3fb472158a93e59df836b9935b54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the current thread to wait until the next period.  <a href="syscall__thread_8c.html#a2a3a3fb472158a93e59df836b9935b54">More...</a><br /></td></tr>
 <tr class="separator:a2a3a3fb472158a93e59df836b9935b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12d3058e8c4464d614c9506562710e91"><td class="memItemLeft" align="right" valign="top"><a id="a12d3058e8c4464d614c9506562710e91"></a>
-kmutex_t *&#160;</td><td class="memItemRight" valign="bottom"><b>sys_mutex_init</b> (uint32_t max_prio)</td></tr>
+<tr class="memitem:a12d3058e8c4464d614c9506562710e91"><td class="memItemLeft" align="right" valign="top">kmutex_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a12d3058e8c4464d614c9506562710e91">sys_mutex_init</a> (uint32_t max_prio)</td></tr>
+<tr class="memdesc:a12d3058e8c4464d614c9506562710e91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a mutex.  <a href="syscall__thread_8c.html#a12d3058e8c4464d614c9506562710e91">More...</a><br /></td></tr>
 <tr class="separator:a12d3058e8c4464d614c9506562710e91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a14ccbc1e43d61617b97ecd06cf65b9"><td class="memItemLeft" align="right" valign="top"><a id="a6a14ccbc1e43d61617b97ecd06cf65b9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sys_mutex_lock</b> (kmutex_t *mutex)</td></tr>
+<tr class="memitem:a6a14ccbc1e43d61617b97ecd06cf65b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a6a14ccbc1e43d61617b97ecd06cf65b9">sys_mutex_lock</a> (kmutex_t *mutex)</td></tr>
+<tr class="memdesc:a6a14ccbc1e43d61617b97ecd06cf65b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locks a mutex.  <a href="syscall__thread_8c.html#a6a14ccbc1e43d61617b97ecd06cf65b9">More...</a><br /></td></tr>
 <tr class="separator:a6a14ccbc1e43d61617b97ecd06cf65b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55db4294dd5ed35ee5b2b1b1043ddbdd"><td class="memItemLeft" align="right" valign="top"><a id="a55db4294dd5ed35ee5b2b1b1043ddbdd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sys_mutex_unlock</b> (kmutex_t *mutex)</td></tr>
+<tr class="memitem:a55db4294dd5ed35ee5b2b1b1043ddbdd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a55db4294dd5ed35ee5b2b1b1043ddbdd">sys_mutex_unlock</a> (kmutex_t *mutex)</td></tr>
+<tr class="memdesc:a55db4294dd5ed35ee5b2b1b1043ddbdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unlocks a mutex.  <a href="syscall__thread_8c.html#a55db4294dd5ed35ee5b2b1b1043ddbdd">More...</a><br /></td></tr>
 <tr class="separator:a55db4294dd5ed35ee5b2b1b1043ddbdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a965b457902b75612d5c4db04d78cb6e1"><td class="memItemLeft" align="right" valign="top"><a id="a965b457902b75612d5c4db04d78cb6e1"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a965b457902b75612d5c4db04d78cb6e1">__thread_u_stacks_low</a></td></tr>
-<tr class="memdesc:a965b457902b75612d5c4db04d78cb6e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heap high and low pointers. <br /></td></tr>
+<tr class="memitem:a965b457902b75612d5c4db04d78cb6e1"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a965b457902b75612d5c4db04d78cb6e1">__thread_u_stacks_low</a></td></tr>
+<tr class="memdesc:a965b457902b75612d5c4db04d78cb6e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heap high and low pointers.  <a href="syscall__thread_8c.html#a965b457902b75612d5c4db04d78cb6e1">More...</a><br /></td></tr>
 <tr class="separator:a965b457902b75612d5c4db04d78cb6e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7df5a7143f4fb8f52024cc2eb04d179e"><td class="memItemLeft" align="right" valign="top"><a id="a7df5a7143f4fb8f52024cc2eb04d179e"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>__thread_u_stacks_top</b></td></tr>
+<tr class="memitem:a7df5a7143f4fb8f52024cc2eb04d179e"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a7df5a7143f4fb8f52024cc2eb04d179e">__thread_u_stacks_top</a></td></tr>
 <tr class="separator:a7df5a7143f4fb8f52024cc2eb04d179e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed1e9fb5e74e0a3280d8d6b74d61146a"><td class="memItemLeft" align="right" valign="top"><a id="aed1e9fb5e74e0a3280d8d6b74d61146a"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>__thread_k_stacks_low</b></td></tr>
+<tr class="memitem:aed1e9fb5e74e0a3280d8d6b74d61146a"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#aed1e9fb5e74e0a3280d8d6b74d61146a">__thread_k_stacks_low</a></td></tr>
 <tr class="separator:aed1e9fb5e74e0a3280d8d6b74d61146a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52f42f247ccf963d377b87cf4bc2ccca"><td class="memItemLeft" align="right" valign="top"><a id="a52f42f247ccf963d377b87cf4bc2ccca"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>__thread_k_stacks_top</b></td></tr>
+<tr class="memitem:a52f42f247ccf963d377b87cf4bc2ccca"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a52f42f247ccf963d377b87cf4bc2ccca">__thread_k_stacks_top</a></td></tr>
 <tr class="separator:a52f42f247ccf963d377b87cf4bc2ccca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae33ce2862dbb799d0a0ee16bb2d11aea"><td class="memItemLeft" align="right" valign="top"><a id="ae33ce2862dbb799d0a0ee16bb2d11aea"></a>
-void *&#160;</td><td class="memItemRight" valign="bottom"><b>thread_kill</b></td></tr>
+<tr class="memitem:ae33ce2862dbb799d0a0ee16bb2d11aea"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#ae33ce2862dbb799d0a0ee16bb2d11aea">thread_kill</a></td></tr>
 <tr class="separator:ae33ce2862dbb799d0a0ee16bb2d11aea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a187e79dd2a6a18d6bbbc4f2509eb668b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a187e79dd2a6a18d6bbbc4f2509eb668b">ub_table</a> []</td></tr>
 <tr class="memdesc:a187e79dd2a6a18d6bbbc4f2509eb668b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Precalculated values for UB test.  <a href="syscall__thread_8c.html#a187e79dd2a6a18d6bbbc4f2509eb668b">More...</a><br /></td></tr>
@@ -213,11 +209,21 @@ void *&#160;</td><td class="memItemRight" valign="bottom"><b>thread_kill</b></td
 <a class="el" href="structglobal__threads__info__t.html">global_threads_info_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a55d8bcf311e6b93798e1d4874f52c811">global_threads_info</a></td></tr>
 <tr class="memdesc:a55d8bcf311e6b93798e1d4874f52c811"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global structure holding thread-related information. <br /></td></tr>
 <tr class="separator:a55d8bcf311e6b93798e1d4874f52c811"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1825644f745e682ab4a25f2c16c90afb"><td class="memItemLeft" align="right" valign="top"><a id="a1825644f745e682ab4a25f2c16c90afb"></a>
+uint32_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a1825644f745e682ab4a25f2c16c90afb">u_stack_low</a></td></tr>
+<tr class="memdesc:a1825644f745e682ab4a25f2c16c90afb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the low address of the user stack. <br /></td></tr>
+<tr class="separator:a1825644f745e682ab4a25f2c16c90afb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0e3f6c24833bd8e1df9354ab296a549"><td class="memItemLeft" align="right" valign="top"><a id="ad0e3f6c24833bd8e1df9354ab296a549"></a>
+uint32_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#ad0e3f6c24833bd8e1df9354ab296a549">k_stack_low</a></td></tr>
+<tr class="memdesc:ad0e3f6c24833bd8e1df9354ab296a549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the low address of the kernel stack. <br /></td></tr>
+<tr class="separator:ad0e3f6c24833bd8e1df9354ab296a549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfcac9c6e35fbfad54a6447b7ee95f54"><td class="memItemLeft" align="right" valign="top"><a id="acfcac9c6e35fbfad54a6447b7ee95f54"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>sysTickFlag</b></td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#acfcac9c6e35fbfad54a6447b7ee95f54">sysTickFlag</a></td></tr>
+<tr class="memdesc:acfcac9c6e35fbfad54a6447b7ee95f54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag indicating whether a SysTick interrupt has occurred. <br /></td></tr>
 <tr class="separator:acfcac9c6e35fbfad54a6447b7ee95f54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85c95ea87e3847f338b8c044241375f0"><td class="memItemLeft" align="right" valign="top"><a id="a85c95ea87e3847f338b8c044241375f0"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>total_count</b></td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall__thread_8c.html#a85c95ea87e3847f338b8c044241375f0">total_count</a></td></tr>
+<tr class="memdesc:a85c95ea87e3847f338b8c044241375f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of ticks since the SysTick timer was initialized. <br /></td></tr>
 <tr class="separator:a85c95ea87e3847f338b8c044241375f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -316,6 +322,116 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>total_count</b></
 
 <p>Gets the total tick counts since the global timer has started. </p>
 <dl class="section return"><dt>Returns</dt><dd>the current total tick values. </dd></dl>
+
+</div>
+</div>
+<a id="a12d3058e8c4464d614c9506562710e91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12d3058e8c4464d614c9506562710e91">&#9670;&nbsp;</a></span>sys_mutex_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">kmutex_t* sys_mutex_init </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>max_prio</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes a mutex. </p>
+<p>This function initializes a mutex with the specified maximum priority.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">max_prio</td><td>Maximum priority for the mutex. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the initialized mutex. </dd></dl>
+
+</div>
+</div>
+<a id="a6a14ccbc1e43d61617b97ecd06cf65b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a14ccbc1e43d61617b97ecd06cf65b9">&#9670;&nbsp;</a></span>sys_mutex_lock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys_mutex_lock </td>
+          <td>(</td>
+          <td class="paramtype">kmutex_t *&#160;</td>
+          <td class="paramname"><em>mutex</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Locks a mutex. </p>
+<p>This function locks the specified mutex, blocking if the mutex is already locked.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mutex</td><td>Pointer to the mutex to lock. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a55db4294dd5ed35ee5b2b1b1043ddbdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55db4294dd5ed35ee5b2b1b1043ddbdd">&#9670;&nbsp;</a></span>sys_mutex_unlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys_mutex_unlock </td>
+          <td>(</td>
+          <td class="paramtype">kmutex_t *&#160;</td>
+          <td class="paramname"><em>mutex</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Unlocks a mutex. </p>
+<p>This function unlocks the specified mutex, allowing other threads to acquire it.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mutex</td><td>Pointer to the mutex to unlock. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0726d2166701a485c555e6b7f7af3b60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0726d2166701a485c555e6b7f7af3b60">&#9670;&nbsp;</a></span>sys_scheduler_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int sys_scheduler_start </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>frequency</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Starts the scheduler. </p>
+<p>Initializes the SysTick timer and triggers the PendSV interrupt to start scheduling threads.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">frequency</td><td>Frequency of the SysTick timer. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success. </dd></dl>
 
 </div>
 </div>
@@ -575,6 +691,99 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>total_count</b></
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="aed1e9fb5e74e0a3280d8d6b74d61146a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed1e9fb5e74e0a3280d8d6b74d61146a">&#9670;&nbsp;</a></span>__thread_k_stacks_low</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char __thread_k_stacks_low</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Low address of kernel stack. </p>
+
+</div>
+</div>
+<a id="a52f42f247ccf963d377b87cf4bc2ccca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52f42f247ccf963d377b87cf4bc2ccca">&#9670;&nbsp;</a></span>__thread_k_stacks_top</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char __thread_k_stacks_top</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>High address of kernel stack. </p>
+
+</div>
+</div>
+<a id="a965b457902b75612d5c4db04d78cb6e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a965b457902b75612d5c4db04d78cb6e1">&#9670;&nbsp;</a></span>__thread_u_stacks_low</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">char __thread_u_stacks_low</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Heap high and low pointers. </p>
+<p>Low address of user stack. </p>
+
+</div>
+</div>
+<a id="a7df5a7143f4fb8f52024cc2eb04d179e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7df5a7143f4fb8f52024cc2eb04d179e">&#9670;&nbsp;</a></span>__thread_u_stacks_top</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char __thread_u_stacks_top</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Top address of user stack. </p>
+
+</div>
+</div>
+<a id="ae33ce2862dbb799d0a0ee16bb2d11aea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae33ce2862dbb799d0a0ee16bb2d11aea">&#9670;&nbsp;</a></span>thread_kill</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* thread_kill</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Pointer to the thread kill function. </p>
+
+</div>
+</div>
 <a id="a187e79dd2a6a18d6bbbc4f2509eb668b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a187e79dd2a6a18d6bbbc4f2509eb668b">&#9670;&nbsp;</a></span>ub_table</h2>
 

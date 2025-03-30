@@ -32,10 +32,17 @@
         4 bit packet with E=0.
 */
 
+/**
+ * @brief I2C slave address for the LCD display.
+ */
 #define SLAVE_ADDR 0b01001110
 
-/*
- * lcd_driver_init: sends appropriate sequence of instructions to lcd to start initialization.  
+/**
+ * @brief Initializes the LCD display.
+ *
+ * This function configures the LCD display by sending initialization commands
+ * over the I2C bus. It sets the display mode, clears the screen, and prepares
+ * the LCD for operation.
  */
 void lcd_driver_init() {
     uint8_t P0 = 0x0;
@@ -89,10 +96,12 @@ void lcd_driver_init() {
     return;
 }
 
-/*
- * lcd_print: sends instructions to lcd to print data array (usually a string) to LCD
+/**
+ * @brief Prints a string to the LCD display.
  *
- * input: data array (usually a string)
+ * This function sends a string of characters to the LCD display for printing.
+ *
+ * @param[in] input Pointer to the null-terminated string to be printed.
  */
 void lcd_print(char *input){
     /* Note: unshifting slave addr which has been shifted left one bit */
@@ -127,12 +136,13 @@ void lcd_print(char *input){
     return;
 }
 
-/*
- * lcd_set_cursor: sends instructions to lcd to change location of cursor
+/**
+ * @brief Sets the cursor position on the LCD display.
  *
- * row: row to put cursor on
- * 
- * col: column to put cursor on
+ * This function moves the cursor to the specified row and column on the LCD.
+ *
+ * @param[in] row The row number (0-based index).
+ * @param[in] col The column number (0-based index).
  */
 void lcd_set_cursor(uint8_t row, uint8_t col){
     /* Note: unshifting slave addr which has been shifted left one bit */
@@ -167,8 +177,10 @@ void lcd_set_cursor(uint8_t row, uint8_t col){
     return;
 }
 
-/*
- * lcd_clear: sends instructions to lcd to clear data from display
+/**
+ * @brief Clears the LCD display.
+ *
+ * This function clears all characters from the LCD display 
  */
 void lcd_clear() {
      uint8_t P0 = 0x0;

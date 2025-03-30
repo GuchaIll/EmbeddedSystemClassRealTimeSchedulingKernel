@@ -89,29 +89,136 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a5ac6094b45fdc3c394b2c6170e4fb15f"><td class="memItemLeft" align="right" valign="top"><a id="a5ac6094b45fdc3c394b2c6170e4fb15f"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>SLAVE_ADDR</b>&#160;&#160;&#160;0b01001110</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="lcd__driver_8c.html#a5ac6094b45fdc3c394b2c6170e4fb15f">SLAVE_ADDR</a>&#160;&#160;&#160;0b01001110</td></tr>
+<tr class="memdesc:a5ac6094b45fdc3c394b2c6170e4fb15f"><td class="mdescLeft">&#160;</td><td class="mdescRight">I2C slave address for the LCD display. <br /></td></tr>
 <tr class="separator:a5ac6094b45fdc3c394b2c6170e4fb15f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3189cb588517fe6bca9bcd83edbbfb9e"><td class="memItemLeft" align="right" valign="top"><a id="a3189cb588517fe6bca9bcd83edbbfb9e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>lcd_driver_init</b> ()</td></tr>
+<tr class="memitem:a3189cb588517fe6bca9bcd83edbbfb9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="lcd__driver_8c.html#a3189cb588517fe6bca9bcd83edbbfb9e">lcd_driver_init</a> ()</td></tr>
+<tr class="memdesc:a3189cb588517fe6bca9bcd83edbbfb9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the LCD display.  <a href="lcd__driver_8c.html#a3189cb588517fe6bca9bcd83edbbfb9e">More...</a><br /></td></tr>
 <tr class="separator:a3189cb588517fe6bca9bcd83edbbfb9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0a8ec95257f8a860755adfaef758e9b"><td class="memItemLeft" align="right" valign="top"><a id="ad0a8ec95257f8a860755adfaef758e9b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>lcd_print</b> (char *input)</td></tr>
+<tr class="memitem:ad0a8ec95257f8a860755adfaef758e9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="lcd__driver_8c.html#ad0a8ec95257f8a860755adfaef758e9b">lcd_print</a> (char *input)</td></tr>
+<tr class="memdesc:ad0a8ec95257f8a860755adfaef758e9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints a string to the LCD display.  <a href="lcd__driver_8c.html#ad0a8ec95257f8a860755adfaef758e9b">More...</a><br /></td></tr>
 <tr class="separator:ad0a8ec95257f8a860755adfaef758e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68e592603e66b23b0360f910f3356877"><td class="memItemLeft" align="right" valign="top"><a id="a68e592603e66b23b0360f910f3356877"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>lcd_set_cursor</b> (uint8_t row, uint8_t col)</td></tr>
+<tr class="memitem:a68e592603e66b23b0360f910f3356877"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="lcd__driver_8c.html#a68e592603e66b23b0360f910f3356877">lcd_set_cursor</a> (uint8_t row, uint8_t col)</td></tr>
+<tr class="memdesc:a68e592603e66b23b0360f910f3356877"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the cursor position on the LCD display.  <a href="lcd__driver_8c.html#a68e592603e66b23b0360f910f3356877">More...</a><br /></td></tr>
 <tr class="separator:a68e592603e66b23b0360f910f3356877"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35c08b1fa742e650f4873939707b893b"><td class="memItemLeft" align="right" valign="top"><a id="a35c08b1fa742e650f4873939707b893b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>lcd_clear</b> ()</td></tr>
+<tr class="memitem:a35c08b1fa742e650f4873939707b893b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="lcd__driver_8c.html#a35c08b1fa742e650f4873939707b893b">lcd_clear</a> ()</td></tr>
+<tr class="memdesc:a35c08b1fa742e650f4873939707b893b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the LCD display.  <a href="lcd__driver_8c.html#a35c08b1fa742e650f4873939707b893b">More...</a><br /></td></tr>
 <tr class="separator:a35c08b1fa742e650f4873939707b893b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>contains functions for initiating and interacting with LCD screen </p>
 <dl class="section date"><dt>Date</dt><dd>Febuary 20 2025</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Mario Cruz | Charlie Ai &lt;macruz | yacil&gt; </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a35c08b1fa742e650f4873939707b893b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35c08b1fa742e650f4873939707b893b">&#9670;&nbsp;</a></span>lcd_clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lcd_clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clears the LCD display. </p>
+<p>This function clears all characters from the LCD display </p>
+
+</div>
+</div>
+<a id="a3189cb588517fe6bca9bcd83edbbfb9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3189cb588517fe6bca9bcd83edbbfb9e">&#9670;&nbsp;</a></span>lcd_driver_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lcd_driver_init </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes the LCD display. </p>
+<p>This function configures the LCD display by sending initialization commands over the I2C bus. It sets the display mode, clears the screen, and prepares the LCD for operation. </p>
+
+</div>
+</div>
+<a id="ad0a8ec95257f8a860755adfaef758e9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0a8ec95257f8a860755adfaef758e9b">&#9670;&nbsp;</a></span>lcd_print()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lcd_print </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>input</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Prints a string to the LCD display. </p>
+<p>This function sends a string of characters to the LCD display for printing.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Pointer to the null-terminated string to be printed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a68e592603e66b23b0360f910f3356877"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68e592603e66b23b0360f910f3356877">&#9670;&nbsp;</a></span>lcd_set_cursor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lcd_set_cursor </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>row</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>col</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the cursor position on the LCD display. </p>
+<p>This function moves the cursor to the specified row and column on the LCD.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">row</td><td>The row number (0-based index). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">col</td><td>The column number (0-based index). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->
 <!-- start footer part -->
 </div>

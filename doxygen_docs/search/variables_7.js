@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['hfsr_204',['HFSR',['../structsystem__control__block__t.html#abc4470fba9cce0c3eadd916c994c16f2',1,'system_control_block_t']]]
+  ['global_5fthreads_5finfo_413',['global_threads_info',['../syscall__thread_8c.html#a55d8bcf311e6b93798e1d4874f52c811',1,'syscall_thread.c']]],
+  ['gtpr_414',['GTPR',['../structuart__reg__map.html#a44354f064d9f5d003130940ea596d0ba',1,'uart_reg_map']]]
 ];

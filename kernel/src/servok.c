@@ -13,19 +13,47 @@
 #include "gpio.h"
 #include "timer.h"
 
+/**
+ * @brief Attribute to mark unused function parameters.
+ */
 #define UNUSED __attribute__((unused))
 
-//array to tracking if the servo is enabled
+
+/**
+ * @brief Array to track if the servos are enabled.
+ *
+ * Each index corresponds to a servo channel (0 or 1).
+ */
 volatile uint8_t servo_enabled[2] = {0, 0};
+
+/**
+ * @brief Array to store the pulse width for each servo.
+ *
+ * Each index corresponds to a servo channel (0 or 1).
+ * The pulse width is calculated based on the desired angle.
+ */
 volatile uint32_t servo_pulse_width[2] = {0, 0};
 
+/**
+ * @brief GPIO pin for PWM signal to servo 1.
+ */
 #define PWM_PIN1 "B3"
+
+/**
+ * @brief GPIO pin for PWM signal to servo 2.
+ */
 #define PWM_PIN2 "B10"
 
 
-
-/*
- * sys_servo_enable: update the servo enable status and clear the corresponding GPIO pin when disabled.
+/**
+ * @brief Enables or disables a servo.
+ *
+ * This function updates the enable status of the specified servo channel.
+ * If the servo is disabled, the corresponding GPIO pin is cleared.
+ *
+ * @param[in] channel The servo channel (0 or 1).
+ * @param[in] enabled 1 to enable the servo, 0 to disable it.
+ * @return 0 on success, -1 if the channel is invalid.
  */
 int sys_servo_enable(UNUSED uint8_t channel, UNUSED uint8_t enabled){
   if(channel > 1){
@@ -52,8 +80,16 @@ int sys_servo_enable(UNUSED uint8_t channel, UNUSED uint8_t enabled){
 return 0;
 }
 
-/*
- * sys_servo_set: set the servo pulse width based on the desired angle.
+/**
+ * @brief Sets the servo pulse width based on the desired angle.
+ *
+ * This function calculates the pulse width for the specified servo channel
+ * based on the desired angle (0 to 180 degrees). The pulse width is stored
+ * in the `servo_pulse_width` array.
+ *
+ * @param[in] channel The servo channel (0 or 1).
+ * @param[in] angle The desired angle (0 to 180 degrees).
+ * @return 0 on success, -1 if the channel or angle is invalid.
  */
 int sys_servo_set(UNUSED uint8_t channel, UNUSED uint8_t angle){
   if(channel > 1 || angle > 180){
@@ -65,10 +101,21 @@ int sys_servo_set(UNUSED uint8_t channel, UNUSED uint8_t angle){
   
   return 0;
 }
+
+/**
+ * @brief Timer interval counter for generating PWM signals.
+ *
+ * This variable is incremented in the timer interrupt handler and is used
+ * to determine when to set or clear the GPIO pins for PWM generation.
+ */
 volatile uint32_t timer_interval = 0;
 
-/*
- * TIMER2_SERVO_IRQHandler: handle the timer2 interrupt for generating PWM signals to control servos.
+/**
+ * @brief Timer interrupt handler for generating PWM signals to control servos.
+ *
+ * This function is called when the timer interrupt occurs. It generates PWM
+ * signals by setting and clearing the GPIO pins for the servos based on the
+ * current timer interval and the pulse width for each servo.
  */
 void TIMER2_SERVO_IRQHandler(){
 

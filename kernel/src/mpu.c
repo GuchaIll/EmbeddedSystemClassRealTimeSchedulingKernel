@@ -25,24 +25,24 @@
 typedef struct
 {
   /**@brief provides information about the MPU */
-  volatile uint32_t TYPER;
+  volatile uint32_t TYPER;    /**< Provides information about the MPU. */
   /**@brief MPU enable/disable and background region control. */
-  volatile uint32_t CTRL;
+  volatile uint32_t CTRL;     /**< MPU enable/disable and background region control. */
   /** @brief Select which MPU region to be configured*/
-  volatile uint32_t RNR;
+  volatile uint32_t RNR;    /**< Select which MPU region to be configured. */
   /**@brief Defines base address of a MPU region */
-  volatile uint32_t RBAR;
+  volatile uint32_t RBAR;   /**< Defines the base address of an MPU region. */
   /**@brief Defines size and attribues of a MPU region*/
-  volatile uint32_t RASR;
+  volatile uint32_t RASR;    /**< Defines the size and attributes of an MPU region. */
 
   /**@brief Field aliases. */
   //@{
-  volatile uint32_t RBAR_A1;
-  volatile uint32_t RASR_A1;
-  volatile uint32_t RBAR_A2;
-  volatile uint32_t RASR_A2;
-  volatile uint32_t RBAR_A3;
-  volatile uint32_t RASR_A3;
+  volatile uint32_t RBAR_A1;    /**< Base address of region A1. */
+  volatile uint32_t RASR_A1;    /**< Size and attributes of region A1. */
+  volatile uint32_t RBAR_A2;    /**< Base address of region A2. */
+  volatile uint32_t RASR_A2;    /**< Size and attributes of region A2. */
+  volatile uint32_t RBAR_A3;    /**< Base address of region A3. */
+  volatile uint32_t RASR_A3;    /**< Size and attributes of region A3. */
   //@}
 } mpu_t;
 
@@ -53,19 +53,19 @@ typedef struct
 typedef struct
 {
   /**@brief System handler control and state register.*/
-  volatile uint32_t SHCRS;
+  volatile uint32_t SHCRS;    /**< System handler control and state register. */
   /**@brief Configurable fault status register.*/
-  volatile uint32_t CFSR;
+  volatile uint32_t CFSR;     /**< Configurable fault status register. */
   /**@brief HardFault Status Register */
-  volatile uint32_t HFSR;
+  volatile uint32_t HFSR;     /**< HardFault status register. */
   /**@brief Hint information of debug events.*/
-  volatile uint32_t DFSR;
+  volatile uint32_t DFSR;     /**< Debug fault status register. */
   /**@brief Addr value of memfault*/
-  volatile uint32_t MMFAR;
+  volatile uint32_t MMFAR;    /**< Memory management fault address register. */
   /**@brief Addr of bus fault */
-  volatile uint32_t BFAR;
+  volatile uint32_t BFAR;     /**< Bus fault address register. */
   /**@brief Auxilliary fault status register.*/
-  volatile uint32_t AFSR;
+  volatile uint32_t AFSR;     /**< Auxiliary fault status register. */
 } system_control_block_t;
 
 /**@brief MPU base address.*/
@@ -73,28 +73,29 @@ typedef struct
 
 /** @brief MPU CTRL register flags. */
 //@{
-#define CTRL_ENABLE_BG_REGION (1 << 2)
-#define CTRL_ENABLE_PROTECTION (1 << 0)
+#define CTRL_ENABLE_BG_REGION (1 << 2) /**< Enables background region access. */
+#define CTRL_ENABLE_PROTECTION (1 << 0) /**< Enables memory protection. */
+//@}
 //@}
 
 /** @brief MPU RNR register flags. */
-#define RNR_REGION (0xFF)
+#define RNR_REGION (0xFF) /**< Region number mask. */
 /** @brief Maximum region number. */
 #define REGION_NUMBER_MAX 7
 
 /** @brief MPU RBAR register flags. */
 //@{
-#define RBAR_VALID (1 << 4)
-#define RBAR_REGION (0xF)
+#define RBAR_VALID (1 << 4) /**< Indicates that the RBAR value is valid. */
+#define RBAR_REGION (0xF)   /**< Region number field in RBAR. */
 //@}
 
 /** @brief MPU RASR register masks. */
 //@{
-#define RASR_XN (1 << 28)
-#define RASR_AP_KERN (1 << 26)
-#define RASR_AP_USER (1 << 25 | 1 << 24)
-#define RASR_SIZE (0b111110)
-#define RASR_ENABLE (1 << 0)
+#define RASR_XN (1 << 28)   /**< Execute Never (XN) bit. */
+#define RASR_AP_KERN (1 << 26) /**< Access permissions for kernel mode. */
+#define RASR_AP_USER (1 << 25 | 1 << 24) /**< Access permissions for user mode. */
+#define RASR_SIZE (0b111110) /**< Region size field. */
+#define RASR_ENABLE (1 << 0) /**< Enables the region. */
 //@}
 
 /** @brief Memory Management Fault Enable bit */
@@ -102,8 +103,9 @@ typedef struct
 
 /** @brief MPU RASR AP user mode encoding. */
 //@{
-#define RASR_AP_USER_READ_ONLY (0b10 << 24)
-#define RASR_AP_USER_READ_WRITE (0b11 << 24)
+#define RASR_AP_USER_READ_ONLY (0b10 << 24) /**< User mode read-only access. */
+#define RASR_AP_USER_READ_WRITE (0b11 << 24) /**< User mode read-write access. */
+
 //@}
 
 /**@brief Systen control block MMIO location.*/

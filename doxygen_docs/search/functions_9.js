@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['set_5fcol_340',['set_col',['../keypad__driver_8c.html#a92e747e76b60b8fce5c0b85a4656e410',1,'keypad_driver.c']]],
+  ['svc_5fc_5fhandler_341',['svc_c_handler',['../svc__handler_8c.html#add8bae4c6198683fd2910ac0d64a0690',1,'svc_handler.c']]],
+  ['sys_5fexit_342',['sys_exit',['../syscall_8c.html#a1c0b6529c2b4ef268480a55f1314a400',1,'syscall.c']]],
+  ['sys_5fget_5fpriority_343',['sys_get_priority',['../syscall__thread_8c.html#a8b4f86fe10ac2c90ce8158872aac7ce2',1,'syscall_thread.c']]],
+  ['sys_5fget_5ftime_344',['sys_get_time',['../syscall__thread_8c.html#a341334c885696457b6f66bb8acda5b22',1,'syscall_thread.c']]],
+  ['sys_5fmutex_5finit_345',['sys_mutex_init',['../syscall__thread_8c.html#a12d3058e8c4464d614c9506562710e91',1,'syscall_thread.c']]],
+  ['sys_5fmutex_5flock_346',['sys_mutex_lock',['../syscall__thread_8c.html#a6a14ccbc1e43d61617b97ecd06cf65b9',1,'syscall_thread.c']]],
+  ['sys_5fmutex_5funlock_347',['sys_mutex_unlock',['../syscall__thread_8c.html#a55db4294dd5ed35ee5b2b1b1043ddbdd',1,'syscall_thread.c']]],
+  ['sys_5fread_348',['sys_read',['../syscall_8c.html#af1580a2b60d1de6953680eb981f43f30',1,'syscall.c']]],
+  ['sys_5fsbrk_349',['sys_sbrk',['../syscall_8c.html#a7f5ec70f8f9ae7913a4a99473bd347c0',1,'syscall.c']]],
+  ['sys_5fscheduler_5fstart_350',['sys_scheduler_start',['../syscall__thread_8c.html#a0726d2166701a485c555e6b7f7af3b60',1,'syscall_thread.c']]],
+  ['sys_5fservo_5fenable_351',['sys_servo_enable',['../servok_8c.html#a9d36b278ab88d4e5a32f7da0ac9d954d',1,'servok.c']]],
+  ['sys_5fservo_5fset_352',['sys_servo_set',['../servok_8c.html#aab0a71094fd2dda9f507eaac8fd7c3af',1,'servok.c']]],
+  ['sys_5fthread_5fcreate_353',['sys_thread_create',['../syscall__thread_8c.html#ac54104218aaaba481bd42968a6045691',1,'syscall_thread.c']]],
+  ['sys_5fthread_5finit_354',['sys_thread_init',['../syscall__thread_8c.html#af1345a2fb5a452e440b4bd2c746c4fe3',1,'syscall_thread.c']]],
+  ['sys_5fthread_5fkill_355',['sys_thread_kill',['../syscall__thread_8c.html#a601e5d8e922ccdec535527e8d8724d78',1,'syscall_thread.c']]],
+  ['sys_5fthread_5ftime_356',['sys_thread_time',['../syscall__thread_8c.html#aa8933e910725546aa9e052369db9cf81',1,'syscall_thread.c']]],
+  ['sys_5fwait_5funtil_5fnext_5fperiod_357',['sys_wait_until_next_period',['../syscall__thread_8c.html#a2a3a3fb472158a93e59df836b9935b54',1,'syscall_thread.c']]],
+  ['sys_5fwrite_358',['sys_write',['../syscall_8c.html#ad47bc183d8d0ce684a447ed8fc4df22d',1,'syscall.c']]],
+  ['systick_5fc_5fhandler_359',['systick_c_handler',['../systick_8c.html#abc96a6564aa346ba124293a6604a0427',1,'systick.c']]],
+  ['systick_5fdelay_360',['systick_delay',['../systick_8c.html#a2871eb499ac4a629c46705cf18bd746a',1,'systick.c']]],
+  ['systick_5fget_5fticks_361',['systick_get_ticks',['../systick_8c.html#a454896f247dbd55330b2751c805e93fb',1,'systick.c']]],
+  ['systick_5finit_362',['systick_init',['../systick_8c.html#a71776eca2df164cd8744761270cb76f7',1,'systick.c']]]
+];

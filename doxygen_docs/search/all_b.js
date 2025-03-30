@@ -1,16 +1,12 @@
 var searchData=
 [
-  ['mm_5fc_5fhandler_54',['mm_c_handler',['../mpu_8c.html#a91bea6c5bee9301515785e2d8a754b82',1,'mpu.c']]],
-  ['mm_5ffault_5fenable_55',['MM_FAULT_ENABLE',['../mpu_8c.html#afb79e0f89ea6181eff8f1c653ac1a157',1,'mpu.c']]],
-  ['mm_5finit_56',['mm_init',['../mpu_8c.html#a0d0d58e2b3f34ada92ab7889d013e717',1,'mpu.c']]],
-  ['mm_5flog2ceil_5fsize_57',['mm_log2ceil_size',['../mpu_8c.html#aef45fdec219c3ac6237f90b805ea6bff',1,'mpu.c']]],
-  ['mm_5fregion_5fdisable_58',['mm_region_disable',['../mpu_8c.html#af59a5684ba88f773a08878c311160bef',1,'mpu.c']]],
-  ['mm_5fregion_5fenable_59',['mm_region_enable',['../mpu_8c.html#aa911f88ae5abc2cf28a3ff0c2de2e395',1,'mpu.c']]],
-  ['mmarvalid_60',['MMARVALID',['../mpu_8c.html#a49a795c37df53d736a30d36ac8a5c8ca',1,'mpu.c']]],
-  ['mmfar_61',['MMFAR',['../structsystem__control__block__t.html#a39cb9e1a18f318132b055b4f3ad996df',1,'system_control_block_t']]],
-  ['mpu_2ec_62',['mpu.c',['../mpu_8c.html',1,'']]],
-  ['mpu_5fbase_63',['MPU_BASE',['../mpu_8c.html#aa0805ccd2bc4e42d63adb0618d2af571',1,'mpu.c']]],
-  ['mpu_5ft_64',['mpu_t',['../structmpu__t.html',1,'']]],
-  ['mstkerr_65',['MSTKERR',['../mpu_8c.html#a9a934466ca47ca6102390fef1078cf85',1,'mpu.c']]],
-  ['munstkerr_66',['MUNSTKERR',['../mpu_8c.html#a3b380f684e8a18a6eba0f32a3e37ad3d',1,'mpu.c']]]
+  ['lcd_5fclear_90',['lcd_clear',['../lcd__driver_8c.html#a35c08b1fa742e650f4873939707b893b',1,'lcd_driver.c']]],
+  ['lcd_5fdriver_2ec_91',['lcd_driver.c',['../lcd__driver_8c.html',1,'']]],
+  ['lcd_5fdriver_5finit_92',['lcd_driver_init',['../lcd__driver_8c.html#a3189cb588517fe6bca9bcd83edbbfb9e',1,'lcd_driver.c']]],
+  ['lcd_5fprint_93',['lcd_print',['../lcd__driver_8c.html#ad0a8ec95257f8a860755adfaef758e9b',1,'lcd_driver.c']]],
+  ['lcd_5fset_5fcursor_94',['lcd_set_cursor',['../lcd__driver_8c.html#a68e592603e66b23b0360f910f3356877',1,'lcd_driver.c']]],
+  ['lr_95',['LR',['../structstack__frame__map.html#a08cc342fa6b0b8df262ef251e6f2c19d',1,'stack_frame_map']]],
+  ['lr_96',['lr',['../structinterrupt__stack__frame.html#ae955d932cf56142206657df8c34a1a73',1,'interrupt_stack_frame::lr()'],['../structpushed__callee__stack__frame.html#ac4df22695c531c2473321b791409cdda',1,'pushed_callee_stack_frame::lr()']]],
+  ['lr_5freturn_5fto_5fkernel_5fmsp_97',['LR_RETURN_TO_KERNEL_MSP',['../syscall__thread_8c.html#abf65de8424a7c25ac572b36b251eb976',1,'syscall_thread.c']]],
+  ['lr_5freturn_5fto_5fuser_5fpsp_98',['LR_RETURN_TO_USER_PSP',['../syscall__thread_8c.html#a8a6ea3d12a6db3f3a0b8afcb52881c2a',1,'syscall_thread.c']]]
 ];

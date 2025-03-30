@@ -73,22 +73,84 @@ $(function() {
 <div class="title">Queue Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Circular buffer for UART data transmission and reception.  
+ <a href="structQueue.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:acf9c21cc2828ed1ac086343a90a2aac8"><td class="memItemLeft" align="right" valign="top"><a id="acf9c21cc2828ed1ac086343a90a2aac8"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>array</b> [size_of_Queue]</td></tr>
+<tr class="memitem:acf9c21cc2828ed1ac086343a90a2aac8"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQueue.html#acf9c21cc2828ed1ac086343a90a2aac8">array</a> [<a class="el" href="uart_8c.html#a351aae3ed960d71e76055540e4169547">size_of_Queue</a>]</td></tr>
 <tr class="separator:acf9c21cc2828ed1ac086343a90a2aac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6db921c43dd065b87615008d90759890"><td class="memItemLeft" align="right" valign="top"><a id="a6db921c43dd065b87615008d90759890"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>tail</b></td></tr>
+<tr class="memitem:a6db921c43dd065b87615008d90759890"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQueue.html#a6db921c43dd065b87615008d90759890">tail</a></td></tr>
 <tr class="separator:a6db921c43dd065b87615008d90759890"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c8bcfa776779dfff87be66633c9566"><td class="memItemLeft" align="right" valign="top"><a id="a33c8bcfa776779dfff87be66633c9566"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>header</b></td></tr>
+<tr class="memitem:a33c8bcfa776779dfff87be66633c9566"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQueue.html#a33c8bcfa776779dfff87be66633c9566">header</a></td></tr>
 <tr class="separator:a33c8bcfa776779dfff87be66633c9566"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54a445ed5ca4dbea02d74247a040409b"><td class="memItemLeft" align="right" valign="top"><a id="a54a445ed5ca4dbea02d74247a040409b"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>count</b></td></tr>
+<tr class="memitem:a54a445ed5ca4dbea02d74247a040409b"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQueue.html#a54a445ed5ca4dbea02d74247a040409b">count</a></td></tr>
 <tr class="separator:a54a445ed5ca4dbea02d74247a040409b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Circular buffer for UART data transmission and reception. </p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="acf9c21cc2828ed1ac086343a90a2aac8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf9c21cc2828ed1ac086343a90a2aac8">&#9670;&nbsp;</a></span>array</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char Queue::array[<a class="el" href="uart_8c.html#a351aae3ed960d71e76055540e4169547">size_of_Queue</a>]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Array to hold the buffer data. </p>
+
+</div>
+</div>
+<a id="a54a445ed5ca4dbea02d74247a040409b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54a445ed5ca4dbea02d74247a040409b">&#9670;&nbsp;</a></span>count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t Queue::count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Number of elements in the buffer. </p>
+
+</div>
+</div>
+<a id="a33c8bcfa776779dfff87be66633c9566"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33c8bcfa776779dfff87be66633c9566">&#9670;&nbsp;</a></span>header</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t Queue::header</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Index for the header of the buffer. </p>
+
+</div>
+</div>
+<a id="a6db921c43dd065b87615008d90759890"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6db921c43dd065b87615008d90759890">&#9670;&nbsp;</a></span>tail</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t Queue::tail</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Index for the tail of the buffer. </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>kernel/src/<a class="el" href="uart_8c.html">uart.c</a></li>
 </ul>

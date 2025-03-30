@@ -88,35 +88,39 @@ $(function() {
 <code>#include &lt;uart.h&gt;</code><br />
 <code>#include &lt;printk.h&gt;</code><br />
 <code>#include &lt;nvic.h&gt;</code><br />
+<code>#include &lt;arm.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:addf5ec070e9499d36b7f2009ce736076"><td class="memItemLeft" align="right" valign="top"><a id="addf5ec070e9499d36b7f2009ce736076"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>UNUSED</b>&#160;&#160;&#160;__attribute__((unused))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a>&#160;&#160;&#160;__attribute__((unused))</td></tr>
+<tr class="memdesc:addf5ec070e9499d36b7f2009ce736076"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute to mark unused function parameters. <br /></td></tr>
 <tr class="separator:addf5ec070e9499d36b7f2009ce736076"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a7f5ec70f8f9ae7913a4a99473bd347c0"><td class="memItemLeft" align="right" valign="top"><a id="a7f5ec70f8f9ae7913a4a99473bd347c0"></a>
-void *&#160;</td><td class="memItemRight" valign="bottom"><b>sys_sbrk</b> (int incr)</td></tr>
+<tr class="memitem:a7f5ec70f8f9ae7913a4a99473bd347c0"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall_8c.html#a7f5ec70f8f9ae7913a4a99473bd347c0">sys_sbrk</a> (int incr)</td></tr>
+<tr class="memdesc:a7f5ec70f8f9ae7913a4a99473bd347c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adjusts the program break to allocate or deallocate memory.  <a href="syscall_8c.html#a7f5ec70f8f9ae7913a4a99473bd347c0">More...</a><br /></td></tr>
 <tr class="separator:a7f5ec70f8f9ae7913a4a99473bd347c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad47bc183d8d0ce684a447ed8fc4df22d"><td class="memItemLeft" align="right" valign="top"><a id="ad47bc183d8d0ce684a447ed8fc4df22d"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>sys_write</b> (int file, char *ptr, int len)</td></tr>
+<tr class="memitem:ad47bc183d8d0ce684a447ed8fc4df22d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall_8c.html#ad47bc183d8d0ce684a447ed8fc4df22d">sys_write</a> (int file, char *ptr, int len)</td></tr>
+<tr class="memdesc:ad47bc183d8d0ce684a447ed8fc4df22d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes data to STDOUT.  <a href="syscall_8c.html#ad47bc183d8d0ce684a447ed8fc4df22d">More...</a><br /></td></tr>
 <tr class="separator:ad47bc183d8d0ce684a447ed8fc4df22d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1580a2b60d1de6953680eb981f43f30"><td class="memItemLeft" align="right" valign="top"><a id="af1580a2b60d1de6953680eb981f43f30"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>sys_read</b> (int file, char *ptr, int len)</td></tr>
+<tr class="memitem:af1580a2b60d1de6953680eb981f43f30"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall_8c.html#af1580a2b60d1de6953680eb981f43f30">sys_read</a> (int file, char *ptr, int len)</td></tr>
+<tr class="memdesc:af1580a2b60d1de6953680eb981f43f30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from STDIN and echoes it back.  <a href="syscall_8c.html#af1580a2b60d1de6953680eb981f43f30">More...</a><br /></td></tr>
 <tr class="separator:af1580a2b60d1de6953680eb981f43f30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c0b6529c2b4ef268480a55f1314a400"><td class="memItemLeft" align="right" valign="top"><a id="a1c0b6529c2b4ef268480a55f1314a400"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sys_exit</b> (int status)</td></tr>
+<tr class="memitem:a1c0b6529c2b4ef268480a55f1314a400"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall_8c.html#a1c0b6529c2b4ef268480a55f1314a400">sys_exit</a> (int status)</td></tr>
+<tr class="memdesc:a1c0b6529c2b4ef268480a55f1314a400"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminates the program.  <a href="syscall_8c.html#a1c0b6529c2b4ef268480a55f1314a400">More...</a><br /></td></tr>
 <tr class="separator:a1c0b6529c2b4ef268480a55f1314a400"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a1a77ce5777a2790c24ac83283bed46da"><td class="memItemLeft" align="right" valign="top"><a id="a1a77ce5777a2790c24ac83283bed46da"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>__heap_low</b></td></tr>
+char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall_8c.html#a1a77ce5777a2790c24ac83283bed46da">__heap_low</a></td></tr>
+<tr class="memdesc:a1a77ce5777a2790c24ac83283bed46da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the start of the heap. <br /></td></tr>
 <tr class="separator:a1a77ce5777a2790c24ac83283bed46da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a281515440aeeb8cb63b4dd62a23c1585"><td class="memItemLeft" align="right" valign="top"><a id="a281515440aeeb8cb63b4dd62a23c1585"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>__heap_top</b></td></tr>
+char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="syscall_8c.html#a281515440aeeb8cb63b4dd62a23c1585">__heap_top</a></td></tr>
+<tr class="memdesc:a281515440aeeb8cb63b4dd62a23c1585"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the end of the heap. <br /></td></tr>
 <tr class="separator:a281515440aeeb8cb63b4dd62a23c1585"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -125,7 +129,155 @@ char&#160;</td><td class="memItemRight" valign="bottom"><b>__heap_top</b></td></
 <dl class="section date"><dt>Date</dt><dd>March 16 2025 <br  />
 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Mario Cruz and Charlie Ai </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a1c0b6529c2b4ef268480a55f1314a400"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c0b6529c2b4ef268480a55f1314a400">&#9670;&nbsp;</a></span>sys_exit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys_exit </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>status</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Terminates the program. </p>
+<p>This function terminates the program by printing the exit status, flushing the UART buffer, and disabling interrupts. It enters an infinite loop to halt execution.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">status</td><td>The exit status code. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af1580a2b60d1de6953680eb981f43f30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1580a2b60d1de6953680eb981f43f30">&#9670;&nbsp;</a></span>sys_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int sys_read </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads data from STDIN and echoes it back. </p>
+<p>This function reads up to the specified number of bytes from the standard input (UART) into the buffer. It echoes the input back to the standard output.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">file</td><td>The file descriptor (must be 0 for STDIN). </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">ptr</td><td>Pointer to the buffer where the input data will be stored. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>The maximum number of bytes to read. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes read on success, or -1 if the file descriptor is invalid. </dd></dl>
+
+</div>
+</div>
+<a id="a7f5ec70f8f9ae7913a4a99473bd347c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f5ec70f8f9ae7913a4a99473bd347c0">&#9670;&nbsp;</a></span>sys_sbrk()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* sys_sbrk </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>incr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adjusts the program break to allocate or deallocate memory. </p>
+<p>This function shifts the program break to allocate or deallocate memory for the calling process. It ensures that the program break does not exceed the heap boundaries.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">incr</td><td>The number of bytes to increase or decrease the program break. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to the previous program break on success, or <code>(void*)-1</code> if the allocation fails. </dd></dl>
+
+</div>
+</div>
+<a id="ad47bc183d8d0ce684a447ed8fc4df22d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad47bc183d8d0ce684a447ed8fc4df22d">&#9670;&nbsp;</a></span>sys_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int sys_write </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Writes data to STDOUT. </p>
+<p>This function writes the specified number of bytes from the buffer to the standard output (UART). It blocks until all bytes are written.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">file</td><td>The file descriptor (must be 1 for STDOUT). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>Pointer to the buffer containing the data to write. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>The number of bytes to write. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes written on success, or -1 if the file descriptor is invalid. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->
 <!-- start footer part -->
 </div>

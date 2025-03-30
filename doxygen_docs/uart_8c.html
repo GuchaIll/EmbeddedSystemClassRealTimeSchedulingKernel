@@ -95,6 +95,7 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UART register map.  <a href="structuart__reg__map.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQueue.html">Queue</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Circular buffer for UART data transmission and reception.  <a href="structQueue.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
@@ -132,68 +133,323 @@ Macros</h2></td></tr>
 <tr class="memdesc:a98dce93feb3c91dfef85affc349906ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive Ready Bit in UART Status Register. <br /></td></tr>
 <tr class="separator:a98dce93feb3c91dfef85affc349906ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a446178044b4cfdf91082e6108a28728c"><td class="memItemLeft" align="right" valign="top"><a id="a446178044b4cfdf91082e6108a28728c"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>CR1_TXEIE</b>&#160;&#160;&#160;(1 &lt;&lt; 7)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a446178044b4cfdf91082e6108a28728c">CR1_TXEIE</a>&#160;&#160;&#160;(1 &lt;&lt; 7)</td></tr>
+<tr class="memdesc:a446178044b4cfdf91082e6108a28728c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable Transmit Data Register Empty Interrupt. <br /></td></tr>
 <tr class="separator:a446178044b4cfdf91082e6108a28728c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7eaac9a8c9e6f8c05e17bb82e6cb04fa"><td class="memItemLeft" align="right" valign="top"><a id="a7eaac9a8c9e6f8c05e17bb82e6cb04fa"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>CR1_RXNEIE</b>&#160;&#160;&#160;(1 &lt;&lt; 5)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a7eaac9a8c9e6f8c05e17bb82e6cb04fa">CR1_RXNEIE</a>&#160;&#160;&#160;(1 &lt;&lt; 5)</td></tr>
+<tr class="memdesc:a7eaac9a8c9e6f8c05e17bb82e6cb04fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable Receive Data Register Not Empty Interrupt. <br /></td></tr>
 <tr class="separator:a7eaac9a8c9e6f8c05e17bb82e6cb04fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addf5ec070e9499d36b7f2009ce736076"><td class="memItemLeft" align="right" valign="top"><a id="addf5ec070e9499d36b7f2009ce736076"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>UNUSED</b>&#160;&#160;&#160;__attribute__((unused))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a>&#160;&#160;&#160;__attribute__((unused))</td></tr>
+<tr class="memdesc:addf5ec070e9499d36b7f2009ce736076"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute to mark unused function parameters. <br /></td></tr>
 <tr class="separator:addf5ec070e9499d36b7f2009ce736076"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a351aae3ed960d71e76055540e4169547"><td class="memItemLeft" align="right" valign="top"><a id="a351aae3ed960d71e76055540e4169547"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>size_of_Queue</b>&#160;&#160;&#160;(16)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a351aae3ed960d71e76055540e4169547">size_of_Queue</a>&#160;&#160;&#160;(16)</td></tr>
+<tr class="memdesc:a351aae3ed960d71e76055540e4169547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of the circular buffer for UART transmission and reception. <br /></td></tr>
 <tr class="separator:a351aae3ed960d71e76055540e4169547"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2374233b8cd8185e753ba171f3229169"><td class="memItemLeft" align="right" valign="top"><a id="a2374233b8cd8185e753ba171f3229169"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>initBuffer</b> ()</td></tr>
+<tr class="memitem:a2374233b8cd8185e753ba171f3229169"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a2374233b8cd8185e753ba171f3229169">initBuffer</a> ()</td></tr>
+<tr class="memdesc:a2374233b8cd8185e753ba171f3229169"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the UART circular buffers.  <a href="uart_8c.html#a2374233b8cd8185e753ba171f3229169">More...</a><br /></td></tr>
 <tr class="separator:a2374233b8cd8185e753ba171f3229169"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01c4a9ab161724e13b1396c79de97f75"><td class="memItemLeft" align="right" valign="top"><a id="a01c4a9ab161724e13b1396c79de97f75"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>enqueue</b> (char c, <a class="el" href="structQueue.html">Queue</a> *buffer)</td></tr>
+<tr class="memitem:a01c4a9ab161724e13b1396c79de97f75"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a01c4a9ab161724e13b1396c79de97f75">enqueue</a> (char c, <a class="el" href="structQueue.html">Queue</a> *buffer)</td></tr>
+<tr class="memdesc:a01c4a9ab161724e13b1396c79de97f75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a character to the specified circular buffer.  <a href="uart_8c.html#a01c4a9ab161724e13b1396c79de97f75">More...</a><br /></td></tr>
 <tr class="separator:a01c4a9ab161724e13b1396c79de97f75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb730db9ca2148e408865e29bf9094a6"><td class="memItemLeft" align="right" valign="top"><a id="acb730db9ca2148e408865e29bf9094a6"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>dequeue</b> (<a class="el" href="structQueue.html">Queue</a> *buffer)</td></tr>
+<tr class="memitem:acb730db9ca2148e408865e29bf9094a6"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#acb730db9ca2148e408865e29bf9094a6">dequeue</a> (<a class="el" href="structQueue.html">Queue</a> *buffer)</td></tr>
+<tr class="memdesc:acb730db9ca2148e408865e29bf9094a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a character from the specified circular buffer.  <a href="uart_8c.html#acb730db9ca2148e408865e29bf9094a6">More...</a><br /></td></tr>
 <tr class="separator:acb730db9ca2148e408865e29bf9094a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43046d2083138223b81739dab2a13585"><td class="memItemLeft" align="right" valign="top"><a id="a43046d2083138223b81739dab2a13585"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>uart_init</b> (int baud)</td></tr>
+<tr class="memitem:a43046d2083138223b81739dab2a13585"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a43046d2083138223b81739dab2a13585">uart_init</a> (int baud)</td></tr>
+<tr class="memdesc:a43046d2083138223b81739dab2a13585"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the UART peripheral.  <a href="uart_8c.html#a43046d2083138223b81739dab2a13585">More...</a><br /></td></tr>
 <tr class="separator:a43046d2083138223b81739dab2a13585"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3eb93066c4e2af03dc437d670a1c073d"><td class="memItemLeft" align="right" valign="top"><a id="a3eb93066c4e2af03dc437d670a1c073d"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>uart_put_byte</b> (char c)</td></tr>
+<tr class="memitem:a3eb93066c4e2af03dc437d670a1c073d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a3eb93066c4e2af03dc437d670a1c073d">uart_put_byte</a> (char c)</td></tr>
+<tr class="memdesc:a3eb93066c4e2af03dc437d670a1c073d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmits a single byte via UART.  <a href="uart_8c.html#a3eb93066c4e2af03dc437d670a1c073d">More...</a><br /></td></tr>
 <tr class="separator:a3eb93066c4e2af03dc437d670a1c073d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4feafc675918fa3fa609071212c53ee"><td class="memItemLeft" align="right" valign="top"><a id="ae4feafc675918fa3fa609071212c53ee"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>USART2_TX_IRQHandler</b> ()</td></tr>
+<tr class="memitem:ae4feafc675918fa3fa609071212c53ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#ae4feafc675918fa3fa609071212c53ee">USART2_TX_IRQHandler</a> ()</td></tr>
+<tr class="memdesc:ae4feafc675918fa3fa609071212c53ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">UART transmit interrupt handler.  <a href="uart_8c.html#ae4feafc675918fa3fa609071212c53ee">More...</a><br /></td></tr>
 <tr class="separator:ae4feafc675918fa3fa609071212c53ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5d6bdc53bbbc07df19d7112b0475679"><td class="memItemLeft" align="right" valign="top"><a id="aa5d6bdc53bbbc07df19d7112b0475679"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>uart_get_byte</b> (char *c)</td></tr>
+<tr class="memitem:aa5d6bdc53bbbc07df19d7112b0475679"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#aa5d6bdc53bbbc07df19d7112b0475679">uart_get_byte</a> (char *c)</td></tr>
+<tr class="memdesc:aa5d6bdc53bbbc07df19d7112b0475679"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receives a single byte via UART.  <a href="uart_8c.html#aa5d6bdc53bbbc07df19d7112b0475679">More...</a><br /></td></tr>
 <tr class="separator:aa5d6bdc53bbbc07df19d7112b0475679"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6db7feb64c426f286c55610cd4df988d"><td class="memItemLeft" align="right" valign="top"><a id="a6db7feb64c426f286c55610cd4df988d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>USART2_RX_IRQHandler</b> ()</td></tr>
+<tr class="memitem:a6db7feb64c426f286c55610cd4df988d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a6db7feb64c426f286c55610cd4df988d">USART2_RX_IRQHandler</a> ()</td></tr>
+<tr class="memdesc:a6db7feb64c426f286c55610cd4df988d"><td class="mdescLeft">&#160;</td><td class="mdescRight">UART receive interrupt handler.  <a href="uart_8c.html#a6db7feb64c426f286c55610cd4df988d">More...</a><br /></td></tr>
 <tr class="separator:a6db7feb64c426f286c55610cd4df988d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adec38e248f7515f0ee427630d5ff98ba"><td class="memItemLeft" align="right" valign="top"><a id="adec38e248f7515f0ee427630d5ff98ba"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>USART2_IRQHandler</b> ()</td></tr>
+<tr class="memitem:adec38e248f7515f0ee427630d5ff98ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#adec38e248f7515f0ee427630d5ff98ba">USART2_IRQHandler</a> ()</td></tr>
+<tr class="memdesc:adec38e248f7515f0ee427630d5ff98ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combined UART interrupt handler.  <a href="uart_8c.html#adec38e248f7515f0ee427630d5ff98ba">More...</a><br /></td></tr>
 <tr class="separator:adec38e248f7515f0ee427630d5ff98ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecd88b3e19a9769077a88de54aa2940d"><td class="memItemLeft" align="right" valign="top"><a id="aecd88b3e19a9769077a88de54aa2940d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>uart_flush</b> ()</td></tr>
+<tr class="memitem:aecd88b3e19a9769077a88de54aa2940d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#aecd88b3e19a9769077a88de54aa2940d">uart_flush</a> ()</td></tr>
+<tr class="memdesc:aecd88b3e19a9769077a88de54aa2940d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes the UART buffers.  <a href="uart_8c.html#aecd88b3e19a9769077a88de54aa2940d">More...</a><br /></td></tr>
 <tr class="separator:aecd88b3e19a9769077a88de54aa2940d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a1a1e8e9dd3c10774fb7023f27c199cc9"><td class="memItemLeft" align="right" valign="top"><a id="a1a1e8e9dd3c10774fb7023f27c199cc9"></a>
-<a class="el" href="structQueue.html">Queue</a>&#160;</td><td class="memItemRight" valign="bottom"><b>TransmitBuffer</b></td></tr>
+<a class="el" href="structQueue.html">Queue</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a1a1e8e9dd3c10774fb7023f27c199cc9">TransmitBuffer</a></td></tr>
+<tr class="memdesc:a1a1e8e9dd3c10774fb7023f27c199cc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Circular buffer for UART transmission. <br /></td></tr>
 <tr class="separator:a1a1e8e9dd3c10774fb7023f27c199cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6eda672a9e1f76bb5a44a1d8d8d81cf"><td class="memItemLeft" align="right" valign="top"><a id="ae6eda672a9e1f76bb5a44a1d8d8d81cf"></a>
-<a class="el" href="structQueue.html">Queue</a>&#160;</td><td class="memItemRight" valign="bottom"><b>ReceiveBuffer</b></td></tr>
+<a class="el" href="structQueue.html">Queue</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#ae6eda672a9e1f76bb5a44a1d8d8d81cf">ReceiveBuffer</a></td></tr>
+<tr class="memdesc:ae6eda672a9e1f76bb5a44a1d8d8d81cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Circular buffer for UART reception. <br /></td></tr>
 <tr class="separator:ae6eda672a9e1f76bb5a44a1d8d8d81cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89f234133d3efe315836311cbf21c64b"><td class="memItemLeft" align="right" valign="top"><a id="a89f234133d3efe315836311cbf21c64b"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="uart_8c.html#a89f234133d3efe315836311cbf21c64b">state</a></td></tr>
+<tr class="memdesc:a89f234133d3efe315836311cbf21c64b"><td class="mdescLeft">&#160;</td><td class="mdescRight">State variable to save and restore interrupt state. <br /></td></tr>
 <tr class="separator:a89f234133d3efe315836311cbf21c64b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interrupt-driven UART implementation. Similar to a stream buffer. </p>
 <dl class="section date"><dt>Date</dt><dd>March 22, 2025</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Mario Cruz </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="acb730db9ca2148e408865e29bf9094a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb730db9ca2148e408865e29bf9094a6">&#9670;&nbsp;</a></span>dequeue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char dequeue </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structQueue.html">Queue</a> *&#160;</td>
+          <td class="paramname"><em>buffer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Removes a character from the specified circular buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">buffer</td><td>Pointer to the circular buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The character dequeued from the buffer. </dd></dl>
+
+</div>
+</div>
+<a id="a01c4a9ab161724e13b1396c79de97f75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01c4a9ab161724e13b1396c79de97f75">&#9670;&nbsp;</a></span>enqueue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enqueue </td>
+          <td>(</td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>c</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structQueue.html">Queue</a> *&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds a character to the specified circular buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>The character to enqueue. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">buffer</td><td>Pointer to the circular buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2374233b8cd8185e753ba171f3229169"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2374233b8cd8185e753ba171f3229169">&#9670;&nbsp;</a></span>initBuffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void initBuffer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes the UART circular buffers. </p>
+<p>This function initializes the <code>TransmitBuffer</code> and <code>ReceiveBuffer</code> by setting their tail, header, and count to 0. </p>
+
+</div>
+</div>
+<a id="aecd88b3e19a9769077a88de54aa2940d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecd88b3e19a9769077a88de54aa2940d">&#9670;&nbsp;</a></span>uart_flush()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void uart_flush </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flushes the UART buffers. </p>
+<p>Clears the <code>TransmitBuffer</code> and <code>ReceiveBuffer</code> and disables UART interrupts. </p>
+
+</div>
+</div>
+<a id="aa5d6bdc53bbbc07df19d7112b0475679"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5d6bdc53bbbc07df19d7112b0475679">&#9670;&nbsp;</a></span>uart_get_byte()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int uart_get_byte </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Receives a single byte via UART. </p>
+<p>Retrieves a byte from the <code>ReceiveBuffer</code>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">c</td><td>Pointer to store the received character. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success, -1 if the buffer is empty. </dd></dl>
+
+</div>
+</div>
+<a id="a43046d2083138223b81739dab2a13585"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43046d2083138223b81739dab2a13585">&#9670;&nbsp;</a></span>uart_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void uart_init </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>baud</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes the UART peripheral. </p>
+<p>Configures the UART2 peripheral for transmission and reception, sets up the baud rate, and initializes the GPIO pins for TX and RX.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">baud</td><td>The baud rate (currently unused, hardcoded in the implementation). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3eb93066c4e2af03dc437d670a1c073d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3eb93066c4e2af03dc437d670a1c073d">&#9670;&nbsp;</a></span>uart_put_byte()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int uart_put_byte </td>
+          <td>(</td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>c</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transmits a single byte via UART. </p>
+<p>Adds the byte to the <code>TransmitBuffer</code> and enables the transmit interrupt.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>The character to transmit. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success, -1 if the buffer is full. </dd></dl>
+
+</div>
+</div>
+<a id="adec38e248f7515f0ee427630d5ff98ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adec38e248f7515f0ee427630d5ff98ba">&#9670;&nbsp;</a></span>USART2_IRQHandler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void USART2_IRQHandler </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Combined UART interrupt handler. </p>
+<p>Handles both transmit and receive interrupts for UART2. </p>
+
+</div>
+</div>
+<a id="a6db7feb64c426f286c55610cd4df988d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6db7feb64c426f286c55610cd4df988d">&#9670;&nbsp;</a></span>USART2_RX_IRQHandler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void USART2_RX_IRQHandler </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>UART receive interrupt handler. </p>
+<p>Handles the reception of data from the UART data register into the <code>ReceiveBuffer</code>. </p>
+
+</div>
+</div>
+<a id="ae4feafc675918fa3fa609071212c53ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4feafc675918fa3fa609071212c53ee">&#9670;&nbsp;</a></span>USART2_TX_IRQHandler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void USART2_TX_IRQHandler </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>UART transmit interrupt handler. </p>
+<p>Handles the transmission of data from the <code>TransmitBuffer</code> to the UART data register. </p>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->
 <!-- start footer part -->
 </div>

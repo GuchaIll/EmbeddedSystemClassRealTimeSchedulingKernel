@@ -91,70 +91,193 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsysclock__map.html">sysclock_map</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the memory-mapped registers of the SysTick timer.  <a href="structsysclock__map.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:addf5ec070e9499d36b7f2009ce736076"><td class="memItemLeft" align="right" valign="top"><a id="addf5ec070e9499d36b7f2009ce736076"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>UNUSED</b>&#160;&#160;&#160;__attribute__((unused))</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a>&#160;&#160;&#160;__attribute__((unused))</td></tr>
+<tr class="memdesc:addf5ec070e9499d36b7f2009ce736076"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attribute to mark unused function parameters. <br /></td></tr>
 <tr class="separator:addf5ec070e9499d36b7f2009ce736076"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b77fde5300186cbf81428a13b8d97f2"><td class="memItemLeft" align="right" valign="top"><a id="a1b77fde5300186cbf81428a13b8d97f2"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>STK_BASE</b>&#160;&#160;&#160;(struct <a class="el" href="structsysclock__map.html">sysclock_map</a> *)  0xE000E010</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a1b77fde5300186cbf81428a13b8d97f2">STK_BASE</a>&#160;&#160;&#160;(struct <a class="el" href="structsysclock__map.html">sysclock_map</a> *)  0xE000E010</td></tr>
+<tr class="memdesc:a1b77fde5300186cbf81428a13b8d97f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base address of the SysTick timer registers. <br /></td></tr>
 <tr class="separator:a1b77fde5300186cbf81428a13b8d97f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f64c96b0308d00e7ce62aef8bb4e525"><td class="memItemLeft" align="right" valign="top"><a id="a6f64c96b0308d00e7ce62aef8bb4e525"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>STK_CTRL_EN_COUNT</b>&#160;&#160;&#160;1</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a6f64c96b0308d00e7ce62aef8bb4e525">STK_CTRL_EN_COUNT</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:a6f64c96b0308d00e7ce62aef8bb4e525"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables the SysTick counter. <br /></td></tr>
 <tr class="separator:a6f64c96b0308d00e7ce62aef8bb4e525"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68a8c80e5427c6452f0249603df7c830"><td class="memItemLeft" align="right" valign="top"><a id="a68a8c80e5427c6452f0249603df7c830"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>STK_CTRL_TICK_EXCEPTION_EN</b>&#160;&#160;&#160;(1 &lt;&lt; 1)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a68a8c80e5427c6452f0249603df7c830">STK_CTRL_TICK_EXCEPTION_EN</a>&#160;&#160;&#160;(1 &lt;&lt; 1)</td></tr>
+<tr class="memdesc:a68a8c80e5427c6452f0249603df7c830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables SysTick exception generation on timer expiration. <br /></td></tr>
 <tr class="separator:a68a8c80e5427c6452f0249603df7c830"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4351c0bdf20750d90842a5cc5dfbf9f3"><td class="memItemLeft" align="right" valign="top"><a id="a4351c0bdf20750d90842a5cc5dfbf9f3"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>STK_LOAD_MASK</b>&#160;&#160;&#160;(0xFFFF)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a4351c0bdf20750d90842a5cc5dfbf9f3">STK_LOAD_MASK</a>&#160;&#160;&#160;(0xFFFF)</td></tr>
+<tr class="memdesc:a4351c0bdf20750d90842a5cc5dfbf9f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for the SysTick reload value. <br /></td></tr>
 <tr class="separator:a4351c0bdf20750d90842a5cc5dfbf9f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6f56ee5ba412856a3e87ff9ebfa1cb5"><td class="memItemLeft" align="right" valign="top"><a id="aa6f56ee5ba412856a3e87ff9ebfa1cb5"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>STK_TICK_LOAD_VAL</b>&#160;&#160;&#160;(0x3E7F)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#aa6f56ee5ba412856a3e87ff9ebfa1cb5">STK_TICK_LOAD_VAL</a>&#160;&#160;&#160;(0x3E7F)</td></tr>
+<tr class="memdesc:aa6f56ee5ba412856a3e87ff9ebfa1cb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default reload value for a 1ms tick (16MHz clock). <br /></td></tr>
 <tr class="separator:aa6f56ee5ba412856a3e87ff9ebfa1cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa739d3d345d0734eb8d5b3912ab3d8b6"><td class="memItemLeft" align="right" valign="top"><a id="aa739d3d345d0734eb8d5b3912ab3d8b6"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>STK_COUNT_FLAG</b>&#160;&#160;&#160;(1&lt;&lt;16)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#aa739d3d345d0734eb8d5b3912ab3d8b6">STK_COUNT_FLAG</a>&#160;&#160;&#160;(1&lt;&lt;16)</td></tr>
+<tr class="memdesc:aa739d3d345d0734eb8d5b3912ab3d8b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag indicating that the SysTick counter has reached 0. <br /></td></tr>
 <tr class="separator:aa739d3d345d0734eb8d5b3912ab3d8b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7db733971daf5b260467208cc5ddb8d"><td class="memItemLeft" align="right" valign="top"><a id="aa7db733971daf5b260467208cc5ddb8d"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>STK_CLKSOURCE</b>&#160;&#160;&#160;(1&lt;&lt;2)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#aa7db733971daf5b260467208cc5ddb8d">STK_CLKSOURCE</a>&#160;&#160;&#160;(1&lt;&lt;2)</td></tr>
+<tr class="memdesc:aa7db733971daf5b260467208cc5ddb8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Selects the processor clock as the SysTick clock source. <br /></td></tr>
 <tr class="separator:aa7db733971daf5b260467208cc5ddb8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addf5ec070e9499d36b7f2009ce736076"><td class="memItemLeft" align="right" valign="top"><a id="addf5ec070e9499d36b7f2009ce736076"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>UNUSED</b>&#160;&#160;&#160;__attribute__((unused))</td></tr>
-<tr class="separator:addf5ec070e9499d36b7f2009ce736076"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a71776eca2df164cd8744761270cb76f7"><td class="memItemLeft" align="right" valign="top"><a id="a71776eca2df164cd8744761270cb76f7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>systick_init</b> (<a class="el" href="mpu_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a> uint32_t frequency)</td></tr>
+<tr class="memitem:a71776eca2df164cd8744761270cb76f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a71776eca2df164cd8744761270cb76f7">systick_init</a> (<a class="el" href="uart_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a> uint32_t frequency)</td></tr>
+<tr class="memdesc:a71776eca2df164cd8744761270cb76f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the SysTick timer.  <a href="systick_8c.html#a71776eca2df164cd8744761270cb76f7">More...</a><br /></td></tr>
 <tr class="separator:a71776eca2df164cd8744761270cb76f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2871eb499ac4a629c46705cf18bd746a"><td class="memItemLeft" align="right" valign="top"><a id="a2871eb499ac4a629c46705cf18bd746a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>systick_delay</b> (<a class="el" href="mpu_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a> uint32_t ticks)</td></tr>
+<tr class="memitem:a2871eb499ac4a629c46705cf18bd746a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a2871eb499ac4a629c46705cf18bd746a">systick_delay</a> (<a class="el" href="uart_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a> uint32_t ticks)</td></tr>
+<tr class="memdesc:a2871eb499ac4a629c46705cf18bd746a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a delay using the SysTick timer.  <a href="systick_8c.html#a2871eb499ac4a629c46705cf18bd746a">More...</a><br /></td></tr>
 <tr class="separator:a2871eb499ac4a629c46705cf18bd746a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a454896f247dbd55330b2751c805e93fb"><td class="memItemLeft" align="right" valign="top"><a id="a454896f247dbd55330b2751c805e93fb"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>systick_get_ticks</b> ()</td></tr>
+<tr class="memitem:a454896f247dbd55330b2751c805e93fb"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a454896f247dbd55330b2751c805e93fb">systick_get_ticks</a> ()</td></tr>
+<tr class="memdesc:a454896f247dbd55330b2751c805e93fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the total number of ticks since the SysTick timer was initialized.  <a href="systick_8c.html#a454896f247dbd55330b2751c805e93fb">More...</a><br /></td></tr>
 <tr class="separator:a454896f247dbd55330b2751c805e93fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade81b6bbb4d0fd32e9b74bb2a5b1ce99"><td class="memItemLeft" align="right" valign="top"><a id="ade81b6bbb4d0fd32e9b74bb2a5b1ce99"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>clear_systick_flag</b> ()</td></tr>
+<tr class="memitem:ade81b6bbb4d0fd32e9b74bb2a5b1ce99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#ade81b6bbb4d0fd32e9b74bb2a5b1ce99">clear_systick_flag</a> ()</td></tr>
+<tr class="memdesc:ade81b6bbb4d0fd32e9b74bb2a5b1ce99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the SysTick interrupt flag.  <a href="systick_8c.html#ade81b6bbb4d0fd32e9b74bb2a5b1ce99">More...</a><br /></td></tr>
 <tr class="separator:ade81b6bbb4d0fd32e9b74bb2a5b1ce99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc96a6564aa346ba124293a6604a0427"><td class="memItemLeft" align="right" valign="top"><a id="abc96a6564aa346ba124293a6604a0427"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>systick_c_handler</b> ()</td></tr>
+<tr class="memitem:abc96a6564aa346ba124293a6604a0427"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#abc96a6564aa346ba124293a6604a0427">systick_c_handler</a> ()</td></tr>
+<tr class="memdesc:abc96a6564aa346ba124293a6604a0427"><td class="mdescLeft">&#160;</td><td class="mdescRight">SysTick interrupt handler.  <a href="systick_8c.html#abc96a6564aa346ba124293a6604a0427">More...</a><br /></td></tr>
 <tr class="separator:abc96a6564aa346ba124293a6604a0427"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a1a116ce248bac5f7afd09e1d47d2cff2"><td class="memItemLeft" align="right" valign="top"><a id="a1a116ce248bac5f7afd09e1d47d2cff2"></a>
-volatile uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>total_count</b></td></tr>
+volatile uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a1a116ce248bac5f7afd09e1d47d2cff2">total_count</a></td></tr>
+<tr class="memdesc:a1a116ce248bac5f7afd09e1d47d2cff2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of ticks since the SysTick timer was initialized. <br /></td></tr>
 <tr class="separator:a1a116ce248bac5f7afd09e1d47d2cff2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3cd595965cc4ca9c303b0761b5ed2c62"><td class="memItemLeft" align="right" valign="top"><a id="a3cd595965cc4ca9c303b0761b5ed2c62"></a>
-volatile int&#160;</td><td class="memItemRight" valign="bottom"><b>sysTickFlag</b> = 0</td></tr>
+volatile int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="systick_8c.html#a3cd595965cc4ca9c303b0761b5ed2c62">sysTickFlag</a> = 0</td></tr>
+<tr class="memdesc:a3cd595965cc4ca9c303b0761b5ed2c62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag indicating whether a SysTick interrupt has occurred. <br /></td></tr>
 <tr class="separator:a3cd595965cc4ca9c303b0761b5ed2c62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the systick timer functionality including initialization, delay, tick retrieval, and tick handler. </p>
 <dl class="section date"><dt>Date</dt><dd>March 20 2025</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Mario Cruz and Charlie Ai </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="ade81b6bbb4d0fd32e9b74bb2a5b1ce99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade81b6bbb4d0fd32e9b74bb2a5b1ce99">&#9670;&nbsp;</a></span>clear_systick_flag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void clear_systick_flag </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clears the SysTick interrupt flag. </p>
+<p>This function resets the <code>sysTickFlag</code> to 0, indicating that the SysTick interrupt has been handled. </p>
+
+</div>
+</div>
+<a id="abc96a6564aa346ba124293a6604a0427"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc96a6564aa346ba124293a6604a0427">&#9670;&nbsp;</a></span>systick_c_handler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void systick_c_handler </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SysTick interrupt handler. </p>
+<p>This function is called every time the SysTick timer expires. It increments the total tick count, sets the SysTick flag, and triggers a PendSV interrupt for scheduling. </p>
+
+</div>
+</div>
+<a id="a2871eb499ac4a629c46705cf18bd746a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2871eb499ac4a629c46705cf18bd746a">&#9670;&nbsp;</a></span>systick_delay()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void systick_delay </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="uart_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a> uint32_t&#160;</td>
+          <td class="paramname"><em>ticks</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a delay using the SysTick timer. </p>
+<p>This function blocks execution until the specified number of ticks has elapsed.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ticks</td><td>The number of ticks to delay. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a454896f247dbd55330b2751c805e93fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a454896f247dbd55330b2751c805e93fb">&#9670;&nbsp;</a></span>systick_get_ticks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t systick_get_ticks </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieves the total number of ticks since the SysTick timer was initialized. </p>
+<dl class="section return"><dt>Returns</dt><dd>The total number of ticks. </dd></dl>
+
+</div>
+</div>
+<a id="a71776eca2df164cd8744761270cb76f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71776eca2df164cd8744761270cb76f7">&#9670;&nbsp;</a></span>systick_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void systick_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="uart_8c.html#addf5ec070e9499d36b7f2009ce736076">UNUSED</a> uint32_t&#160;</td>
+          <td class="paramname"><em>frequency</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes the SysTick timer. </p>
+<p>Configures the SysTick timer with the specified frequency, enabling the counter, exception generation, and selecting the processor clock as the clock source.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">frequency</td><td>The desired frequency of the SysTick timer in Hz. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->
 <!-- start footer part -->
 </div>

@@ -29,13 +29,13 @@
  */
 //@{
 extern char
-  __thread_u_stacks_low,
-  __thread_u_stacks_top,
-  __thread_k_stacks_low,
-  __thread_k_stacks_top;
+  __thread_u_stacks_low,      /**< Low address of user stack. */
+  __thread_u_stacks_top,      /**< Top address of user stack. */
+  __thread_k_stacks_low,      /**< Low address of kernel stack. */
+  __thread_k_stacks_top;      /**< High address of kernel stack. */
 
   
-  extern void* thread_kill;
+  extern void* thread_kill;   /**< Pointer to the thread kill function. */
 //@}
 
 /** ub_table:
@@ -51,20 +51,23 @@ float ub_table[] = {
   .7012, .7009
 };
 
-/** Stack frame pushed onto PSP upon exception
- * @struct user_stack_frame
+/**
+ * @struct interrupt_stack_frame
+ * @brief Represents the stack frame pushed onto the stack during an interrupt.
  *
- * @brief  Stack frame upon exception.
+ * This structure contains the registers saved during an interrupt, including
+ * general-purpose registers and special-purpose registers such as the program counter (PC)
+ * and program status register (PSR).
  */
 typedef struct {
-  uint32_t r0;   /** @brief Register value for r0 */
-  uint32_t r1;   /** @brief Register value for r1 */
-  uint32_t r2;   /** @brief Register value for r2 */
-  uint32_t r3;   /** @brief Register value for r3 */
-  uint32_t r12;  /** @brief Register value for r12 */
-  uint32_t lr;   /** @brief Register value for lr*/
-  uint32_t pc;   /** @brief Register value for pc */
-  uint32_t xPSR; /** @brief Register value for xPSR */
+  uint32_t r0;   /**< General-purpose register R0. */
+  uint32_t r1;   /**< General-purpose register R1. */
+  uint32_t r2;   /**< General-purpose register R2. */
+  uint32_t r3;   /**< General-purpose register R3. */
+  uint32_t r12;  /**< General-purpose register R12. */
+  uint32_t lr;   /**< Link register (LR). */
+  uint32_t pc;   /**< Program counter (PC). */
+  uint32_t xPSR; /**< Program status register (PSR). */
 } interrupt_stack_frame;
 
 /**
@@ -73,18 +76,18 @@ typedef struct {
  */
 typedef struct global_threads_info 
 {
-    uint32_t max_threads;
-    uint32_t max_mutexes;
-    uint32_t stack_size; // Size of stack in words
-    uint32_t tick_counter;
-    uint32_t current_thread; // index of the current thread in array
+    uint32_t max_threads;   /**< Maximum number of threads. */
+    uint32_t max_mutexes;   /**< Maximum number of mutexes. */
+    uint32_t stack_size;    /**< Size of stack in words. */
+    uint32_t tick_counter;  /**< System tick counter. */
+    uint32_t current_thread;  /**< Index of the currently running thread. */
 
-    uint32_t thread_time_left_in_C[16]; // array holding how many more ticks the corresponding thread has run in period
-    uint32_t thread_time_left_in_T[16]; // array holding how many more ticks the corresponding thread has left until period end
-    uint32_t thread_time[16]; // array holding at what tick the corresponding thread started
+    uint32_t thread_time_left_in_C[16]; /**< Remaining computation time for each thread. */
+    uint32_t thread_time_left_in_T[16]; /**< Remaining period time for each thread. */
+    uint32_t thread_time[16]; /**< Absolute start time for each thread. */
 
-    uint32_t ready_threads[16]; // array holding the ready threads
-    uint32_t waiting_threads[16]; // number of ready threads
+    uint32_t ready_threads[16];  /**< Array of ready threads. */
+    uint32_t waiting_threads[16]; /**< Array of waiting threads. */
   } global_threads_info_t;
 
 /**
@@ -105,16 +108,16 @@ typedef enum thread_state{
  */
 /* Stack frame pushed onto MSP before intiating context switch */
 typedef struct {
-  uint32_t *PSP;
-  uint32_t r4;
-  uint32_t r5;
-  uint32_t r6;
-  uint32_t r7;
-  uint32_t r8;
-  uint32_t r9;
-  uint32_t r10;
-  uint32_t r11;
-  uint32_t lr;
+  uint32_t *PSP;   /**< Pointer to the thread's Process Stack Pointer (PSP). */
+  uint32_t r4;    /**< Register value for r4 */
+  uint32_t r5;    /**< General-purpose register R5. */
+  uint32_t r6;    /**< General-purpose register R6. */
+  uint32_t r7;    /**< General-purpose register R7. */
+  uint32_t r8;    /**< General-purpose register R8. */
+  uint32_t r9;    /**< General-purpose register R9. */
+  uint32_t r10;   /**< General-purpose register R10. */
+  uint32_t r11;   /**< General-purpose register R11. */
+  uint32_t lr;    /**< Link register (LR). */
 
 } pushed_callee_stack_frame;
 
@@ -127,14 +130,14 @@ typedef struct {
  */
 /* TCB struct that keeps track of thread main and program stack contexts and critical timing information*/
 typedef struct TCB{
-  pushed_callee_stack_frame *msp;
+  pushed_callee_stack_frame *msp;   /**< Pointer to the thread's kernel stack. */
 
-  uint32_t priority; //dynamic priority (0-16), thread ID should equate static priority
-  uint32_t computation_time;
-  uint32_t period; 
-  uint32_t svc_status;
+  uint32_t priority;                /**< Static Thread priority (0-16). */
+  uint32_t computation_time;        /**< Computation time (C) in ticks. */
+  uint32_t period;                  /**< Period (T) in ticks. */
+  uint32_t svc_status;              /**< SVC status (privileged/unprivileged). */
 
-  thread_state_t state;
+  thread_state_t state;             /**< Current state of the thread. */
 
 } TCB_t;
 
@@ -146,8 +149,14 @@ TCB_t TCB_ARRAY[16];
 /** @brief Global structure holding thread-related information. */
 global_threads_info_t global_threads_info;
 
+/**
+ * @brief Pointer to the low address of the user stack.
+ */
 uint32_t *u_stack_low;
 
+/**
+ * @brief Pointer to the low address of the kernel stack.
+ */
 uint32_t *k_stack_low;
 
 /* ub_test(C, T)
@@ -533,7 +542,15 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T, void *vargp)
   return 0;
 }
 
-/* Inits the systick timer and runs the pend_sv interrupt */
+/**
+ * @brief Starts the scheduler.
+ *
+ * Initializes the SysTick timer and triggers the PendSV interrupt to start
+ * scheduling threads.
+ *
+ * @param[in] frequency Frequency of the SysTick timer.
+ * @return 0 on success.
+ */
 int sys_scheduler_start( uint32_t frequency ){
   systick_init(frequency);
   pend_pendsv();
@@ -615,18 +632,37 @@ void sys_wait_until_next_period(){ //needs fixing
   pend_pendsv();
 }
 
-
+/**
+ * @brief Initializes a mutex.
+ *
+ * This function initializes a mutex with the specified maximum priority.
+ *
+ * @param[in] max_prio Maximum priority for the mutex.
+ * @return Pointer to the initialized mutex.
+ */
 kmutex_t *sys_mutex_init( uint32_t max_prio ) {
   (void) max_prio;
   return NULL;
 }
 
-
+/**
+ * @brief Locks a mutex.
+ *
+ * This function locks the specified mutex, blocking if the mutex is already locked.
+ *
+ * @param[in] mutex Pointer to the mutex to lock.
+ */
 void sys_mutex_lock( kmutex_t *mutex ) {
   (void) mutex;
 }
 
-
+/**
+ * @brief Unlocks a mutex.
+ *
+ * This function unlocks the specified mutex, allowing other threads to acquire it.
+ *
+ * @param[in] mutex Pointer to the mutex to unlock.
+ */
 void sys_mutex_unlock( kmutex_t *mutex ) {
   (void) mutex;
 }

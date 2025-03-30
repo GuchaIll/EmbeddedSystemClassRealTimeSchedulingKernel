@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['global_5fthreads_5finfo_25',['global_threads_info',['../syscall__thread_8c.html#a55d8bcf311e6b93798e1d4874f52c811',1,'syscall_thread.c']]],
-  ['global_5fthreads_5finfo_5ft_26',['global_threads_info_t',['../structglobal__threads__info__t.html',1,'']]],
-  ['gtpr_27',['GTPR',['../structuart__reg__map.html#a44354f064d9f5d003130940ea596d0ba',1,'uart_reg_map']]]
+  ['fifth_5farg_42',['fifth_arg',['../structstack__frame__map.html#ad40f0688fdf77307cc925392be85daa4',1,'stack_frame_map']]],
+  ['fltr_43',['FLTR',['../structi2c__reg__map.html#aa2f0229573dbd4cf161b6e4748743701',1,'i2c_reg_map']]]
 ];

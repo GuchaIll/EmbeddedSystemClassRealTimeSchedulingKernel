@@ -1,4 +1,19 @@
 var searchData=
 [
-  ['ub_5ftable_226',['ub_table',['../syscall__thread_8c.html#a187e79dd2a6a18d6bbbc4f2509eb668b',1,'syscall_thread.c']]]
+  ['servo_5fenabled_465',['servo_enabled',['../servok_8c.html#af7b0c189fcd2e8228dbd602d504260f2',1,'servok.c']]],
+  ['servo_5fpulse_5fwidth_466',['servo_pulse_width',['../servok_8c.html#a2fa083e1451b14d588a09dfde4b63510',1,'servok.c']]],
+  ['shcrs_467',['SHCRS',['../structsystem__control__block__t.html#a76a032421f5c8246135992ef15ef78a3',1,'system_control_block_t']]],
+  ['smcr_468',['smcr',['../structtim2__5.html#a5ce342ed9f5fce65a3dde69abc409bd6',1,'tim2_5']]],
+  ['sr_469',['SR',['../structuart__reg__map.html#a6d7a433d5f2875de69193969b1e403d9',1,'uart_reg_map']]],
+  ['sr_470',['sr',['../structtim2__5.html#a04bd50636e722a8260734d81582e5da5',1,'tim2_5']]],
+  ['sr1_471',['SR1',['../structi2c__reg__map.html#a6e70eb4dd52c2b6daca0fd1247d8960d',1,'i2c_reg_map']]],
+  ['sr2_472',['SR2',['../structi2c__reg__map.html#a6a78400aebec0c222204bcb37c29b208',1,'i2c_reg_map']]],
+  ['stack_5fsize_473',['stack_size',['../structglobal__threads__info__t.html#ab5196458101a47202731e5627d6b1387',1,'global_threads_info_t']]],
+  ['state_474',['state',['../structTCB__t.html#a92dcf8c1174335883e244401348662d3',1,'TCB_t::state()'],['../uart_8c.html#a89f234133d3efe315836311cbf21c64b',1,'state():&#160;uart.c']]],
+  ['stk_5fcalib_475',['STK_CALIB',['../structsysclock__map.html#ae605f93d200c4d3a630d8d995bb20fd3',1,'sysclock_map']]],
+  ['stk_5fctrl_476',['STK_CTRL',['../structsysclock__map.html#abbbd4c2fa0953a6f53900abbbf8b2822',1,'sysclock_map']]],
+  ['stk_5fload_477',['STK_LOAD',['../structsysclock__map.html#a1e7deadf44665d2fa45fbe5d1c39ef06',1,'sysclock_map']]],
+  ['stk_5fval_478',['STK_VAL',['../structsysclock__map.html#aa083f806959e60a83043e84866183c5e',1,'sysclock_map']]],
+  ['svc_5fstatus_479',['svc_status',['../structTCB__t.html#a823c280f2754444fa2e0e2070208d7d5',1,'TCB_t']]],
+  ['systickflag_480',['sysTickFlag',['../syscall__thread_8c.html#acfcac9c6e35fbfad54a6447b7ee95f54',1,'sysTickFlag():&#160;systick.c'],['../systick_8c.html#a3cd595965cc4ca9c303b0761b5ed2c62',1,'sysTickFlag():&#160;systick.c']]]
 ];

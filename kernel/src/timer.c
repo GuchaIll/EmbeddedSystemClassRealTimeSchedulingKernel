@@ -13,27 +13,77 @@
 #include <rcc.h>
 #include <nvic.h>
 
-
+/**
+ * @brief Attribute to mark unused function parameters.
+ */
 #define UNUSED __attribute__((unused))
 
+/**
+ * @brief Enables the timer counter.
+ */
 #define TIM_CR1_CEN (1 << 0)
+
+/**
+ * @brief Update interrupt flag for the timer.
+ */
 #define TIM_SR_UIF (1 << 0)
+
+/**
+ * @brief Enables update interrupt generation for the timer.
+ */
 #define TIM_DIER_UIE (1 << 0)
+
+/**
+ * @brief Update generation for the timer.
+ */
 #define TIM_EGR_UG (1 << 0)
 
+/**
+ * @brief RCC enable bit for Timer 2.
+ */
 #define TIM2_EN (1 << 0)
+
+/**
+ * @brief RCC enable bit for Timer 3.
+ */
 #define TIM3_EN (1 << 1)
+
+/**
+ * @brief RCC enable bit for Timer 4.
+ */
 #define TIM4_EN (1 << 2)
+
+/**
+ * @brief RCC enable bit for Timer 5.
+ */
 #define TIM5_EN (1 << 3)
 
+/**
+ * @brief NVIC interrupt number for Timer 2.
+ */
 #define NVIC_TIM2_IRQ 28
+
+/**
+ * @brief NVIC interrupt number for Timer 3.
+ */
 #define NVIC_TIM3_IRQ 29
+
+/**
+ * @brief NVIC interrupt number for Timer 4.
+ */
 #define NVIC_TIM4_IRQ 30
+
+/**
+ * @brief NVIC interrupt number for Timer 5.
+ */
 #define NVIC_TIM5_IRQ 50 //nvic table showing missing TIM4 fix
 
 
 
-/** @brief tim2_5 */
+/**
+ * @struct tim2_5
+ * @brief Represents the memory-mapped registers of Timers 2 to 5.
+ */
 struct tim2_5 {
   volatile uint32_t cr1; /**< 00 Control Register 1 */
   volatile uint32_t cr2; /**< 04 Control Register 2 */
@@ -55,7 +105,11 @@ struct tim2_5 {
 };
 
 
-
+/**
+ * @brief Array of base addresses for Timers 2 to 5.
+ *
+ * Each index corresponds to a timer. Index 0 and 1 are unused.
+ */
 struct tim2_5* const timer_base[] = {(void *)0x0,   // N/A - Don't fill out
                                      (void *)0x0,   // N/A - Don't fill out
                                      (void *)0x40000000,    // TODO: fill out address for TIMER 2
@@ -64,14 +118,16 @@ struct tim2_5* const timer_base[] = {(void *)0x0,   // N/A - Don't fill out
                                      (void *)0x40000C00};   // TODO: fill out address for TIMER 5
 
 
-/*
-* Starts the timer
-*
-* @param timer - The timer
-* @param prescaler - Prescalar for clock
-* @param Period - Period of the timer interrupt
-*/
-
+/**
+ * @brief Initializes a hardware timer.
+ *
+ * Configures the specified timer with the given prescaler and period, enables
+ * the timer, and sets up the NVIC interrupt for the timer.
+ *
+ * @param[in] timer The timer to initialize (2 to 5).
+ * @param[in] prescalar The prescaler value for the timer clock.
+ * @param[in] period The period value for the timer interrupt.
+ */
 void timer_init(int timer, uint32_t prescalar, uint32_t period) {
   struct rcc_reg_map *rcc = RCC_BASE;
   rcc->apb1_enr = rcc->apb1_enr| TIM2_EN;
@@ -106,8 +162,13 @@ void timer_init(int timer, uint32_t prescalar, uint32_t period) {
   
 }
 
-/*
- * timer_disable: disable the specified timer.
+
+/**
+ * @brief Disables a hardware timer.
+ *
+ * Stops the specified timer and disables its RCC clock.
+ *
+ * @param[in] timer The timer to disable (2 to 5).
  */
 void timer_disable(UNUSED int timer) {
 
@@ -136,8 +197,12 @@ void timer_disable(UNUSED int timer) {
   
 }
 
-/*
- * time r_clear_interrupt_bit: clear the update interrupt flag for the specified timer.
+/**
+ * @brief Clears the update interrupt flag for a timer.
+ *
+ * This function clears the update interrupt flag for the specified timer.
+ *
+ * @param[in] timer The timer whose interrupt flag should be cleared (2 to 5).
  */
 void timer_clear_interrupt_bit(UNUSED int timer) {
   struct tim2_5 *timerBase = timer_base[timer];

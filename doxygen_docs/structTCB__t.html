@@ -79,29 +79,114 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a5c35e16f4e9ed013f99f783b50ef5636"><td class="memItemLeft" align="right" valign="top"><a id="a5c35e16f4e9ed013f99f783b50ef5636"></a>
-<a class="el" href="structpushed__callee__stack__frame.html">pushed_callee_stack_frame</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>msp</b></td></tr>
+<tr class="memitem:a5c35e16f4e9ed013f99f783b50ef5636"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpushed__callee__stack__frame.html">pushed_callee_stack_frame</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTCB__t.html#a5c35e16f4e9ed013f99f783b50ef5636">msp</a></td></tr>
 <tr class="separator:a5c35e16f4e9ed013f99f783b50ef5636"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29dfdb4d4b8f9a00c184dabe1f54a0b5"><td class="memItemLeft" align="right" valign="top"><a id="a29dfdb4d4b8f9a00c184dabe1f54a0b5"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>priority</b></td></tr>
+<tr class="memitem:a29dfdb4d4b8f9a00c184dabe1f54a0b5"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTCB__t.html#a29dfdb4d4b8f9a00c184dabe1f54a0b5">priority</a></td></tr>
 <tr class="separator:a29dfdb4d4b8f9a00c184dabe1f54a0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdf4112caffc351c0f649cebec34dea4"><td class="memItemLeft" align="right" valign="top"><a id="acdf4112caffc351c0f649cebec34dea4"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>computation_time</b></td></tr>
+<tr class="memitem:acdf4112caffc351c0f649cebec34dea4"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTCB__t.html#acdf4112caffc351c0f649cebec34dea4">computation_time</a></td></tr>
 <tr class="separator:acdf4112caffc351c0f649cebec34dea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac36e926082275e35703f50df19bde424"><td class="memItemLeft" align="right" valign="top"><a id="ac36e926082275e35703f50df19bde424"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>period</b></td></tr>
+<tr class="memitem:ac36e926082275e35703f50df19bde424"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTCB__t.html#ac36e926082275e35703f50df19bde424">period</a></td></tr>
 <tr class="separator:ac36e926082275e35703f50df19bde424"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a823c280f2754444fa2e0e2070208d7d5"><td class="memItemLeft" align="right" valign="top"><a id="a823c280f2754444fa2e0e2070208d7d5"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>svc_status</b></td></tr>
+<tr class="memitem:a823c280f2754444fa2e0e2070208d7d5"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTCB__t.html#a823c280f2754444fa2e0e2070208d7d5">svc_status</a></td></tr>
 <tr class="separator:a823c280f2754444fa2e0e2070208d7d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92dcf8c1174335883e244401348662d3"><td class="memItemLeft" align="right" valign="top"><a id="a92dcf8c1174335883e244401348662d3"></a>
-<a class="el" href="syscall__thread_8c.html#abfd2ee26a60099efd7a5ebf6cb5fcdaf">thread_state_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
+<tr class="memitem:a92dcf8c1174335883e244401348662d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="syscall__thread_8c.html#abfd2ee26a60099efd7a5ebf6cb5fcdaf">thread_state_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTCB__t.html#a92dcf8c1174335883e244401348662d3">state</a></td></tr>
 <tr class="separator:a92dcf8c1174335883e244401348662d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Thread Control Block (TCB) structure. </p>
 <p>This structure holds the context and metadata for a thread, including its stack pointer, priority, computation time, period, and state. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="acdf4112caffc351c0f649cebec34dea4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdf4112caffc351c0f649cebec34dea4">&#9670;&nbsp;</a></span>computation_time</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t TCB_t::computation_time</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Computation time (C) in ticks. </p>
+
+</div>
+</div>
+<a id="a5c35e16f4e9ed013f99f783b50ef5636"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c35e16f4e9ed013f99f783b50ef5636">&#9670;&nbsp;</a></span>msp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpushed__callee__stack__frame.html">pushed_callee_stack_frame</a>* TCB_t::msp</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pointer to the thread's kernel stack. </p>
+
+</div>
+</div>
+<a id="ac36e926082275e35703f50df19bde424"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac36e926082275e35703f50df19bde424">&#9670;&nbsp;</a></span>period</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t TCB_t::period</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Period (T) in ticks. </p>
+
+</div>
+</div>
+<a id="a29dfdb4d4b8f9a00c184dabe1f54a0b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29dfdb4d4b8f9a00c184dabe1f54a0b5">&#9670;&nbsp;</a></span>priority</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t TCB_t::priority</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Static Thread priority (0-16). </p>
+
+</div>
+</div>
+<a id="a92dcf8c1174335883e244401348662d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92dcf8c1174335883e244401348662d3">&#9670;&nbsp;</a></span>state</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="syscall__thread_8c.html#abfd2ee26a60099efd7a5ebf6cb5fcdaf">thread_state_t</a> TCB_t::state</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Current state of the thread. </p>
+
+</div>
+</div>
+<a id="a823c280f2754444fa2e0e2070208d7d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a823c280f2754444fa2e0e2070208d7d5">&#9670;&nbsp;</a></span>svc_status</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t TCB_t::svc_status</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>SVC status (privileged/unprivileged). </p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>kernel/src/<a class="el" href="syscall__thread_8c.html">syscall_thread.c</a></li>
 </ul>
 </div><!-- contents -->

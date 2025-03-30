@@ -15,15 +15,36 @@
 #include <nvic.h>
 #include <arm.h>
 
-
+/**
+ * @brief Attribute to mark unused function parameters.
+ */
 #define UNUSED __attribute__((unused))
 
+/**
+ * @brief Pointer to the start of the heap.
+ */
 extern char __heap_low;
+
+/**
+ * @brief Pointer to the end of the heap.
+ */
 extern char __heap_top;
 
+/**
+ * @brief Current program break (end of the heap).
+ */
 static void* curr_program_break = &__heap_low;
 
-/* Shifts Heap Pointers To Unused Memory*/
+/**
+ * @brief Adjusts the program break to allocate or deallocate memory.
+ *
+ * This function shifts the program break to allocate or deallocate memory
+ * for the calling process. It ensures that the program break does not exceed
+ * the heap boundaries.
+ *
+ * @param[in] incr The number of bytes to increase or decrease the program break.
+ * @return A pointer to the previous program break on success, or `(void*)-1` if the allocation fails.
+ */
 void *sys_sbrk(int incr){
   void *previous_heap_end = curr_program_break;
   
@@ -36,22 +57,37 @@ void *sys_sbrk(int incr){
   return (void*)previous_heap_end;
 }
 
-/* Writes to STDOUT */
+/**
+ * @brief Writes data to STDOUT.
+ *
+ * This function writes the specified number of bytes from the buffer to
+ * the standard output (UART). It blocks until all bytes are written.
+ *
+ * @param[in] file The file descriptor (must be 1 for STDOUT).
+ * @param[in] ptr Pointer to the buffer containing the data to write.
+ * @param[in] len The number of bytes to write.
+ * @return The number of bytes written on success, or -1 if the file descriptor is invalid.
+ */
 int sys_write(int file, char *ptr, int len){
   if (file != 1) {return -1;}
-  //int curr_ind = 0;
-  //while (curr_ind < len){
-   // if (0 == uart_put_byte(ptr[curr_ind])){
-  //    curr_ind ++;
-  //  }
- // }
+  
  for(int i = 0; i < len; i++){
    while(uart_put_byte(ptr[i]) );
  }
   return len;
 }
 
-/* Reads From STDIN and Echos Back */
+/**
+ * @brief Reads data from STDIN and echoes it back.
+ *
+ * This function reads up to the specified number of bytes from the standard
+ * input (UART) into the buffer. It echoes the input back to the standard output.
+ *
+ * @param[in] file The file descriptor (must be 0 for STDIN).
+ * @param[out] ptr Pointer to the buffer where the input data will be stored.
+ * @param[in] len The maximum number of bytes to read.
+ * @return The number of bytes read on success, or -1 if the file descriptor is invalid.
+ */
 int sys_read(int file, char *ptr, int len){
   if (file != 0) {return -1;} /* Case For Not Reading From STDIN*/
   char c[2];
@@ -92,7 +128,15 @@ int sys_read(int file, char *ptr, int len){
   return len;
 }
 
-/* Exit Program */
+/**
+ * @brief Terminates the program.
+ *
+ * This function terminates the program by printing the exit status,
+ * flushing the UART buffer, and disabling interrupts. It enters an
+ * infinite loop to halt execution.
+ *
+ * @param[in] status The exit status code.
+ */
 void sys_exit(int status){
   printk("Exit status: %d\n", status);
   uart_flush();

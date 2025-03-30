@@ -1,25 +1,4 @@
 var searchData=
 [
-  ['scb_5fbase_89',['SCB_BASE',['../mpu_8c.html#ad55a7ddb8d4b2398b0c1cfec76c0d9fd',1,'mpu.c']]],
-  ['servok_2ec_90',['servok.c',['../servok_8c.html',1,'']]],
-  ['shcrs_91',['SHCRS',['../structsystem__control__block__t.html#a76a032421f5c8246135992ef15ef78a3',1,'system_control_block_t']]],
-  ['smcr_92',['smcr',['../structtim2__5.html#a5ce342ed9f5fce65a3dde69abc409bd6',1,'tim2_5']]],
-  ['sr_93',['sr',['../structtim2__5.html#a04bd50636e722a8260734d81582e5da5',1,'tim2_5']]],
-  ['sr_94',['SR',['../structuart__reg__map.html#a6d7a433d5f2875de69193969b1e403d9',1,'uart_reg_map']]],
-  ['sr_5freceiveready_95',['SR_RECEIVEREADY',['../uart__polling_8c.html#a98dce93feb3c91dfef85affc349906ea',1,'SR_RECEIVEREADY():&#160;uart_polling.c'],['../uart_8c.html#a98dce93feb3c91dfef85affc349906ea',1,'SR_RECEIVEREADY():&#160;uart.c']]],
-  ['sr_5ftransmitready_96',['SR_TRANSMITREADY',['../uart__polling_8c.html#a7ea3b617752694bca7f174dc8cc00085',1,'SR_TRANSMITREADY():&#160;uart_polling.c'],['../uart_8c.html#a7ea3b617752694bca7f174dc8cc00085',1,'SR_TRANSMITREADY():&#160;uart.c']]],
-  ['stack_5fframe_5fmap_97',['stack_frame_map',['../structstack__frame__map.html',1,'']]],
-  ['svc_5fhandler_2ec_98',['svc_handler.c',['../svc__handler_8c.html',1,'']]],
-  ['sys_5fget_5fpriority_99',['sys_get_priority',['../syscall__thread_8c.html#a8b4f86fe10ac2c90ce8158872aac7ce2',1,'syscall_thread.c']]],
-  ['sys_5fget_5ftime_100',['sys_get_time',['../syscall__thread_8c.html#a341334c885696457b6f66bb8acda5b22',1,'syscall_thread.c']]],
-  ['sys_5fthread_5fcreate_101',['sys_thread_create',['../syscall__thread_8c.html#ac54104218aaaba481bd42968a6045691',1,'syscall_thread.c']]],
-  ['sys_5fthread_5finit_102',['sys_thread_init',['../syscall__thread_8c.html#af1345a2fb5a452e440b4bd2c746c4fe3',1,'syscall_thread.c']]],
-  ['sys_5fthread_5fkill_103',['sys_thread_kill',['../syscall__thread_8c.html#a601e5d8e922ccdec535527e8d8724d78',1,'syscall_thread.c']]],
-  ['sys_5fthread_5ftime_104',['sys_thread_time',['../syscall__thread_8c.html#aa8933e910725546aa9e052369db9cf81',1,'syscall_thread.c']]],
-  ['sys_5fwait_5funtil_5fnext_5fperiod_105',['sys_wait_until_next_period',['../syscall__thread_8c.html#a2a3a3fb472158a93e59df836b9935b54',1,'syscall_thread.c']]],
-  ['syscall_2ec_106',['syscall.c',['../syscall_8c.html',1,'']]],
-  ['syscall_5fthread_2ec_107',['syscall_thread.c',['../syscall__thread_8c.html',1,'']]],
-  ['sysclock_5fmap_108',['sysclock_map',['../structsysclock__map.html',1,'']]],
-  ['system_5fcontrol_5fblock_5ft_109',['system_control_block_t',['../structsystem__control__block__t.html',1,'']]],
-  ['systick_2ec_110',['systick.c',['../systick_8c.html',1,'']]]
+  ['queue_133',['Queue',['../structQueue.html',1,'']]]
 ];

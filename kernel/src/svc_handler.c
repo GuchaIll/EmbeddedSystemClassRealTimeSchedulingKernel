@@ -14,22 +14,37 @@
 #include <syscall_thread.h>
 #include <servok.h>
 
+/**
+ * @brief Attribute to mark unused function parameters.
+ */
 #define UNUSED __attribute__((unused))
 
+/**
+ * @struct stack_frame_map
+ * @brief Represents the stack frame layout during an SVC interrupt.
+ *
+ * This structure maps the stack frame pushed onto the stack during an SVC interrupt,
+ * including general-purpose registers, the program counter, and the processor status register.
+ */
 struct stack_frame_map {
-    volatile uint32_t R0;  
-    volatile uint32_t R1;   
-    volatile uint32_t R2;  
-    volatile uint32_t R3;  
-    volatile uint32_t R12;  
-    volatile uint32_t LR;  
-    volatile uint32_t PC; 
-    volatile uint32_t PSR;
-    volatile uint32_t fifth_arg;
+    volatile uint32_t R0;         /**< General-purpose register R0. */
+    volatile uint32_t R1;         /**< General-purpose register R1. */
+    volatile uint32_t R2;         /**< General-purpose register R2. */
+    volatile uint32_t R3;         /**< General-purpose register R3. */
+    volatile uint32_t R12;        /**< General-purpose register R12. */
+    volatile uint32_t LR;         /**< Link register (LR). */
+    volatile uint32_t PC;         /**< Program counter (PC). */
+    volatile uint32_t PSR;        /**< Program status register (PSR). */
+    volatile uint32_t fifth_arg;   /**< Fifth argument passed to the SVC handler. */
 };
 
-/*
- * svc_c_handler: process the SVC interrupt, extract the SVC number and arguments, and dispatch the appropriate system call.
+/**
+ * @brief Handles the SVC interrupt.
+ *
+ * This function processes the SVC interrupt by extracting the SVC number and arguments
+ * from the stack frame and dispatching the appropriate system call.
+ *
+ * @param[in] stack_p Pointer to the stack frame at the time of the SVC interrupt.
  */
 void svc_c_handler( uint32_t * stack_p ) {
   set_svc_status(1);
