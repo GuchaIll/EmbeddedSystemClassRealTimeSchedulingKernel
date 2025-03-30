@@ -227,6 +227,10 @@ void USART2_IRQHandler() {
 void uart_flush(){
   struct uart_reg_map *uart = UART2_BASE;
 
+  while (TransmitBuffer.count > 0){
+    
+  }
+
   ReceiveBuffer.count = 0;
   ReceiveBuffer.header = 0;
   ReceiveBuffer.tail = 0;

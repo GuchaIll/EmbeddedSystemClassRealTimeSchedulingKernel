@@ -13,6 +13,7 @@
 #include <uart.h>
 #include <printk.h>
 #include <nvic.h>
+#include <arm.h>
 
 
 #define UNUSED __attribute__((unused))
@@ -95,9 +96,7 @@ int sys_read(int file, char *ptr, int len){
 void sys_exit(int status){
   printk("Exit status: %d\n", status);
   uart_flush();
-  uart_put_byte(status);
-
-  nvic_irq(38, IRQ_DISABLE);
+  disable_interrupts();
   while (1) {
   }
 }
