@@ -146,6 +146,10 @@ TCB_t TCB_ARRAY[16];
 /** @brief Global structure holding thread-related information. */
 global_threads_info_t global_threads_info;
 
+uint32_t *u_stack_low;
+
+uint32_t *k_stack_low;
+
 /* ub_test(C, T)
   1. Computes C/T of new thread 
   2. Computes overall utilization based on threads already created
@@ -245,12 +249,18 @@ int thread_scheduler(){
 }
   
   /* Pick next thread to run based on algorithm and current thread with status Running */
+  int boolean = 0;
   for (uint32_t priority = 0; priority < max_threads; priority ++){
+    if (TCB_ARRAY[priority].state == WAITING){
+      boolean = 1;
+    }
     if (TCB_ARRAY[priority].state == READY){
       return priority;
     }
   }
-  if (TCB_ARRAY[max_threads].state != DONE) {return max_threads;}
+  if (boolean == 1){
+    return max_threads;
+  }
   return max_threads + 1;
 }
 
@@ -279,6 +289,7 @@ void *pendsv_c_handler(void *context_ptr){
     uint32_t svc_stat = get_svc_status();
 
     pushed_callee_stack_frame * callee_saved_stk = context_ptr;
+
   
     TCB_t * TCB = &TCB_ARRAY[current_thread]; //tcb context automatically stores the entire context
   
@@ -403,7 +414,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   user_sp->r2 = 0;
   user_sp->r3 = 0;
   user_sp->r12 = 0;
-  user_sp->lr = (uint32_t)default_idle_fn;
+  user_sp->lr = (uint32_t)&thread_kill; // changed from default
   user_sp->pc = (uint32_t) idle_fn;
   user_sp->xPSR = XPSR_INIT;
 
@@ -419,7 +430,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   
 
   TCB_ARRAY[prio_idle].state = READY;
-  TCB_ARRAY[prio_idle].svc_status = 1; //clown moment
+  TCB_ARRAY[prio_idle].svc_status = 0; //clown moment
 
   global_threads_info.thread_time[prio_idle] = 0;
   global_threads_info.thread_time_left_in_T[prio_idle] = 1;
@@ -431,7 +442,7 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
   TCB_ARRAY[prio_default].period = 0x1;
   TCB_ARRAY[prio_default].priority = prio_default;
   TCB_ARRAY[prio_default].state = RUNNING;
-  TCB_ARRAY[prio_default].svc_status = 1; //clown moment
+  TCB_ARRAY[prio_default].svc_status = 0; //clown moment
 
   global_threads_info.thread_time[prio_default] = 0;
   global_threads_info.thread_time_left_in_T[prio_default] = 1;
@@ -522,14 +533,12 @@ int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T, void *vargp)
   return 0;
 }
 
-
 /* Inits the systick timer and runs the pend_sv interrupt */
 int sys_scheduler_start( uint32_t frequency ){
   systick_init(frequency);
   pend_pendsv();
   return 0;
 }
-
 
 /* Loops through TCB array to find priority of thread which is running */
 /**
@@ -574,15 +583,21 @@ uint32_t sys_thread_time(){
  */
 void sys_thread_kill(){
   uint32_t priority = sys_get_priority();
-  if (priority == global_threads_info.max_threads-1){ // Default Thread Is Called It
+  // uint32_t max_threads = global_threads_info.max_threads;
+  if (priority == global_threads_info.max_threads+1){ // Default Thread Is Called It
     sys_exit(1);
   }
-  else if(priority == global_threads_info.max_threads-2){// Idle Thread is Calling It 
+  else if(priority == global_threads_info.max_threads){// Idle Thread is Calling It 
     // run default idle
-    TCB_ARRAY[global_threads_info.max_threads].state = RUNNING;
+    interrupt_stack_frame * psp = (interrupt_stack_frame *)(TCB_ARRAY[global_threads_info.max_threads].msp -> PSP);
+    psp -> pc = (uint32_t) &default_idle_fn;
   }
   else{
     TCB_ARRAY[priority].state = DONE;
+    // for (uint32_t i = 0; i < max_threads; i ++){
+
+    // }
+    pend_pendsv();
   }
   return;
 }
