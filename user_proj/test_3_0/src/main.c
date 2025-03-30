@@ -51,7 +51,7 @@ int main( void ) {
     printf ( "Test failed, thread 2. C = %d\n", try_C );
     return 1;
   }
-  
+  //I guess we should be able to overwrite thread priorities with thread create
   for ( try_C = 1000; try_C > 0; try_C -= 25 ) {
     stat = thread_create( &thread_fn, 3, try_C, 5000, ( void * )3 );
     if ( stat == 0 ) break;

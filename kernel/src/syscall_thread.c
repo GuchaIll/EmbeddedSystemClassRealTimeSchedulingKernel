@@ -67,7 +67,10 @@ typedef struct {
   uint32_t xPSR; /** @brief Register value for xPSR */
 } interrupt_stack_frame;
 
-/** Info that is important for tracking timing, maximum priorities, and stack limits*/
+/**
+ * @struct global_threads_info_t
+ * @brief Global thread information for tracking timing, priorities, and stack limits.
+ */
 typedef struct global_threads_info 
 {
     uint32_t max_threads;
@@ -84,7 +87,10 @@ typedef struct global_threads_info
     uint32_t waiting_threads[16]; // number of ready threads
   } global_threads_info_t;
 
-/* Enumerating our thread states */
+/**
+ * @enum thread_state_t
+ * @brief Enumeration of thread states.
+ */
 typedef enum thread_state{
       NEW, //process created
       READY, //process ready to run
@@ -93,6 +99,10 @@ typedef enum thread_state{
       DONE //Exit
 } thread_state_t;
 
+/**
+ * @struct pushed_callee_stack_frame
+ * @brief Stack frame pushed onto MSP before initiating a context switch.
+ */
 /* Stack frame pushed onto MSP before intiating context switch */
 typedef struct {
   uint32_t *PSP;
@@ -108,6 +118,13 @@ typedef struct {
 
 } pushed_callee_stack_frame;
 
+/**
+ * @struct TCB_t
+ * @brief Thread Control Block (TCB) structure.
+ *
+ * This structure holds the context and metadata for a thread, including
+ * its stack pointer, priority, computation time, period, and state.
+ */
 /* TCB struct that keeps track of thread main and program stack contexts and critical timing information*/
 typedef struct TCB{
   pushed_callee_stack_frame *msp;
@@ -122,9 +139,11 @@ typedef struct TCB{
 } TCB_t;
 
 // Our TCB array which holds corresponding TCBs of our threads
+/** @brief Array of Thread Control Blocks (TCBs) for all threads. */
 TCB_t TCB_ARRAY[16];
 
 // Our global thread info struct that holds important information for timing, stack sizes, and max priorities.
+/** @brief Global structure holding thread-related information. */
 global_threads_info_t global_threads_info;
 
 /* ub_test(C, T)
@@ -133,6 +152,14 @@ global_threads_info_t global_threads_info;
   3. Sums new thread utilization with old total utilization and checks against corresponding ub bound 
   4. Returns the result
 */
+
+/**
+ * @brief Performs the utilization bound (UB) test for thread creation.
+ *
+ * @param[in] C Computation time of the new thread.
+ * @param[in] T Period of the new thread.
+ * @return 0 if the thread passes the UB test, -1 otherwise.
+ */
 int ub_test(int C, int T){
   int max_threads = global_threads_info.max_threads;
   float utilization = (float)C/T;
@@ -155,14 +182,23 @@ int ub_test(int C, int T){
   Flag to keep track of context switching not started by the systick so as to not decrement C or T when that happens*/
 extern uint32_t sysTickFlag;
 
-/* thread_scheduler()
+
+/**
+ * @brief Scheduler function to manage thread execution.
+ *
+ * This function reduces the computation time (C) of the currently running thread,
+ * transitions threads to the appropriate state based on their computation time
+ * and period, and selects the next thread to run.
+ *
+ * thread_scheduler()
   1. Reduces the compute time left of the currently running thread 
   2  If compute time is 0, then switch to WAITING state for the thread
   3. Reduces the period time left of all the threads 
   4. If period time left is 0, then switch to READY state and reset the values of C time left and T time left 
   5. Loops through the thread array to find the closest thread to priority 0 that is READY state
   6. Switches the next thread to be run's state to RUNNING and returns its priority
-*/
+ * @return The priority of the next thread to run.
+ */
 int thread_scheduler(){
   /* Get currently running thread */
   uint32_t curr_running = sys_get_priority();
@@ -218,11 +254,22 @@ int thread_scheduler(){
   return max_threads + 1;
 }
 
-/* pendsv_c_handler(context_ptr)
+
+/**
+ * @brief PendSV handler for context switching.
+ *
+ * This function saves the current thread's context, selects the next thread to run,
+ * and restores the context of the next thread.
+ *
+ * pendsv_c_handler(context_ptr)
   1. Saves context to TCB (basically just saving the msp)
   2. Calls the scheduler to return priority of the next thread to be run
   3. Retrieves the msp of the next thread to be run and returns that value
-*/
+
+ * @param[in] context_ptr Pointer to the context of the current thread.
+ * @return Pointer to the context of the next thread to run.
+ */
+
 void *pendsv_c_handler(void *context_ptr){
     /* Store current thread context from memory pointed to by context_ptr into TCB array */
 
@@ -266,20 +313,37 @@ void *pendsv_c_handler(void *context_ptr){
     return next_TCB -> msp;
 }
 
-/* Our default idle function just not written in Assembly*/
+/**
+ * @brief Default idle function.
+ *
+ * This function is executed when no other threads are ready to run.
+ */
 void default_idle_fn(){
   while(1){
     wait_for_interrupt();
   }
 }
 
-/* sys_thread_init(max_threads, stack_size, idle_fn, max_mutexes
-  1. Updates global thread values such as max_threads and stack size
-  2. Computes all psp and msp pointers for threads to be run
-  3. Sets up the idle_fn with the default values at the final value of priortiy in the array (depends on max_threads) 
-  4. Sets up interrupt stack frame for idle_fn on its psp
-  5. Sets up default values in the precomputed msp that contain psp and r4, etc, error code in lr.
-*/
+
+/**
+ * @brief Initializes the thread system.
+ *
+ * Sets up the global thread information, allocates stack space, and initializes
+ * the idle thread and default thread.
+ * 
+ * sys_thread_init(max_threads, stack_size, idle_fn, max_mutexes
+ *1. Updates global thread values such as max_threads and stack size
+ * 2. Computes all psp and msp pointers for threads to be run
+ * 3. Sets up the idle_fn with the default values at the final value of priortiy in the array (depends on max_threads) 
+ * 4. Sets up interrupt stack frame for idle_fn on its psp
+ * 5. Sets up default values in the precomputed msp that contain psp and r4, etc, error code in lr.
+ *
+ * @param[in] max_threads Maximum number of threads.
+ * @param[in] stack_size Stack size for each thread.
+ * @param[in] idle_fn Pointer to the idle function.
+ * @param[in] max_mutexes Maximum number of mutexes.
+ * @return 0 on success, -1 on failure.
+ */
 int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, uint32_t max_mutexes){
   global_threads_info.max_mutexes = max_mutexes;
   global_threads_info.max_threads = max_threads;
@@ -385,13 +449,26 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
 }
 
 
-/* sys_thread_create(fn, prio, C, T, vargp)
-  1. Do checks to ensure that thread creation would be valid
-  2. Updates TCB of corresponding priority with values from inputs 
-  3. Sets up the stack pointed to by the threads MSP (at precomputed address) to contain default values PSP (precomputed), r4 - r11, lr
-  4. Sets up the stack pointed to by the threads PSP with interrupt stack frame and fills it in with function pointer and vargp
-  5. Sets up the global thread info values to include things like appropriate thread absolute start time, and time left in period. 
-*/
+/**
+ * @brief Creates a new thread.
+ *
+ * Initializes the thread's TCB, sets up its stack, and configures its
+ * computation time and period.
+ * 
+ * sys_thread_create(fn, prio, C, T, vargp)
+ * 1. Do checks to ensure that thread creation would be valid
+ * 2. Updates TCB of corresponding priority with values from inputs 
+ * 3. Sets up the stack pointed to by the threads MSP (at precomputed address) to contain default values PSP (precomputed), r4 - r11, lr
+ * 4. Sets up the stack pointed to by the threads PSP with interrupt stack frame and fills it in with function pointer and vargp
+ * 5. Sets up the global thread info values to include things like appropriate thread absolute start time, and time left in period. 
+ *
+ * @param[in] fn Function pointer to the thread's entry function.
+ * @param[in] prio Priority of the thread.
+ * @param[in] C Computation time (C) in ticks.
+ * @param[in] T Period (T) in ticks.
+ * @param[in] vargp Pointer to the thread's argument.
+ * @return 0 on success, -1 on failure.
+ */
 int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T, void *vargp){
 
   if(prio >= global_threads_info.max_threads || TCB_ARRAY[prio].state == READY) {
@@ -455,31 +532,46 @@ int sys_scheduler_start( uint32_t frequency ){
 
 
 /* Loops through TCB array to find priority of thread which is running */
+/**
+ * @brief Gets the priority of the currently running thread.
+ *
+ * @return The priority of the currently running thread.
+ */
 uint32_t sys_get_priority(){
-  //for (int i = 0; i < 16; i ++){
-   // if (TCB_ARRAY[i].state == RUNNING){
-  //    return i;
-  //  } 
- // }
+ 
   //printk("Error: No thread is running");
   return global_threads_info.current_thread;
 }
 
 // Global From Systick.c
 extern uint32_t total_count;
+
+/**
+ * @brief Gets the total tick counts since the global timer has started.
+ *
+ * @return the current total tick values.
+ */
 uint32_t sys_get_time(){
   uint32_t timeValue = systick_get_ticks();
   return timeValue;
 }
 
-// Gets priority and indexes into global thread info
+/**
+ * @brief Gets the absolute time of the currently running thread.
+ *
+ * @return The absolute time of the currently running thread.
+ */
 uint32_t sys_thread_time(){
   int priority = sys_get_priority();
   int abs_thread_time = global_threads_info.thread_time[priority];
   return abs_thread_time;
 }
 
-/* Permanently deschedules the thread its called from. Checks if valid to kill this particular thread */
+/**
+ * @brief Permanently deschedules the currently running thread.
+ *
+ * Transitions the thread to the DONE state and selects the next thread to run.
+ */
 void sys_thread_kill(){
   uint32_t priority = sys_get_priority();
   if (priority == global_threads_info.max_threads-1){ // Default Thread Is Called It
@@ -495,7 +587,12 @@ void sys_thread_kill(){
   return;
 }
 
-/* Sets current thread to wait until next period*/
+/**
+ * @brief Sets the current thread to wait until the next period.
+ *
+ * Transitions the thread to the WAITING state and triggers the PendSV interrupt
+ * to invoke the scheduler.
+ */
 void sys_wait_until_next_period(){ //needs fixing
   int priority = sys_get_priority();
   TCB_ARRAY[priority].state = WAITING;
