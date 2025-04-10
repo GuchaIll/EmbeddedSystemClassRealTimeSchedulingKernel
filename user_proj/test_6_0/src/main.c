@@ -8,15 +8,15 @@
  *         T2 (75, 400), S1 (0-75)
  *
  * @note  Expected output:
- *       t = 0 --- Task: 0, locked
- *       t = 8 --- Task: 0, unlocked
- *       t = 8 --- Task: 1, locked
- *       t = 56 --- Task: 1, unlocked
- *       t = 56 --- Task: 2, locked
- *       t = 129 --- Task: 2, unlocked
- *       t = 129 --- Task: 0, locked
+ *       t = 0 --- Task: 0, locked     highest priority: 0
+ *       t = 8 --- Task: 0, unlocked   blocking threads, set to waiting
+ *       t = 8 --- Task: 1, locked     highest priority: 0
+ *       t = 56 --- Task: 1, unlocked  thread 1 finish compute
+ *       t = 56 --- Task: 2, locked    highest priority: 0
+ *       t = 129 --- Task: 2, unlocked s
+ *       t = 129 --- Task: 0, locked  period->
  *       t = 137 --- Task: 0, unlocked
- *       t = 200 --- Task: 0, locked
+ *       t = 200 --- Task: 0, locked  period ->
  *       t = 208 --- Task: 0, unlocked
  *       t = 208 --- Task: 1, locked
  *       t = 256 --- Task: 1, unlocked

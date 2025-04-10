@@ -12,6 +12,7 @@
 #include <debug.h>
 #include <syscall.h>
 #include <syscall_thread.h>
+#include <syscall_mutex.h>
 #include <servok.h>
 
 /**
@@ -68,6 +69,8 @@ void svc_c_handler( uint32_t * stack_p ) {
   int res_read;
   int servo_enable;
   int servo_set;
+
+  kmutex_t * mutex;
   switch ( svc_number ) {
     case 0:
       res_sbrk = sys_sbrk(first_arg);
@@ -110,13 +113,14 @@ void svc_c_handler( uint32_t * stack_p ) {
       stack -> R0 = sys_scheduler_start(first_arg);
     break;
     case 13:
-      //stack -> R0 = sys_mutex_init();
+      mutex = sys_mutex_init((uint32_t)first_arg);
+      stack -> R0 = (uint32_t)mutex;
     break;
     case 14:
-      //stack -> R0 = sys_mutex_lock();
+      sys_mutex_lock((kmutex_t*)first_arg);
     break;
     case 15:
-      //stack -> R0 = sys_mutex_unlock();
+      sys_mutex_unlock((kmutex_t*)first_arg);
     break;
     case 16:
       sys_wait_until_next_period();

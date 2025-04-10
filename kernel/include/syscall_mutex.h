@@ -51,4 +51,6 @@ void sys_mutex_lock( kmutex_t *mutex );
  */
 void sys_mutex_unlock( kmutex_t *mutex );
 
+void initialize_mutex_array( void );
+
 #endif /* _SYSCALL_MUTEX_H_ */

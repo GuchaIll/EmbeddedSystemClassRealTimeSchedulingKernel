@@ -301,7 +301,9 @@ int thread_scheduler(){
   {
       if(TCB_ARRAY[i].state == READY)
       {
-          if(TCB_ARRAY[i].priority < highest_priority)
+          //printk("Thread %d is ready with priority %d\n", i, TCB_ARRAY[i].priority);
+          //check if the thread is holding any mutexes, if it is waiting for any mutexes
+          if(TCB_ARRAY[i].priority < highest_priority && TCB_ARRAY[i].waiting_mutex_bitmap == 0)
           {
               highest_priority = TCB_ARRAY[i].priority;
               highest_priority_thread = i;
@@ -348,7 +350,7 @@ int thread_scheduler(){
 void *pendsv_c_handler(void *context_ptr){
     /* Store current thread context from memory pointed to by context_ptr into TCB array */
 
-    uint32_t current_thread = sys_get_priority();
+    uint32_t current_thread = global_threads_info.current_thread;
 
     // save svc_status
     uint32_t svc_stat = get_svc_status();
@@ -520,6 +522,9 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
 
   global_threads_info.current_thread = prio_default;
 
+  // Initialize the mutex array
+  initialize_mutex_array();
+
 
   return 0;
 }
@@ -675,6 +680,7 @@ void sys_thread_kill(){
   return;
 }
 
+
 /**
  * @brief Sets the current thread to wait until the next period.
  *
@@ -694,6 +700,13 @@ void sys_wait_until_next_period(){ //needs fixing
   pend_pendsv();
 }
 
+void initialize_mutex_array(){
+  for(uint32_t i = 0; i < MAX_MUTEXES; i++){
+    mutex_array[i].locked_by = NOT_LOCKED;
+    mutex_array[i].prio_ceil = 0;
+    mutex_array[i].index = i;
+  }
+}
 /**
  * @brief Initializes a mutex.
  *
@@ -724,27 +737,52 @@ kmutex_t *sys_mutex_init( uint32_t max_prio ) {
  */
 void sys_mutex_lock( kmutex_t *mutex ) {
 
-  uint32_t current_thread = sys_get_priority();
+  uint32_t current_thread = global_threads_info.current_thread;
 
+  //Q: checking for sufficient priority: 
   //check if the current thread's priority is less than or equal to the mutex's priority ceiling
   //In other words, make sure the thread has sufficient priority to acquire the mutex
-  if(TCB_ARRAY[current_thread].priority > mutex->prio_ceil)
-  {
+  //if(TCB_ARRAY[current_thread].priority > mutex->prio_ceil)
+  //{
     //Terminate the thread if it does not have sufficient priority
-    printk("Warning: Thread %d does not have sufficient priority to acquire mutex %d\n", current_thread, mutex->index);
-    sys_thread_kill();
-    return;
-  }
+   // printk("Warning: Thread %d does not have sufficient priority to acquire mutex %d\n", current_thread, mutex->index);
+   // sys_thread_kill();
+   // return;
+  //}
 
-  //wait until the mutex is unlocked
-  while(mutex->locked_by != NOT_LOCKED ) {
+   // Check if the current thread's priority is less than or equal to the mutex's priority ceiling
+   if (TCB_ARRAY[current_thread].priority < mutex->prio_ceil) {
+    printk("Warning: Thread %d cannot lock mutex %d because its priority (%d) is higher than the mutex's priority ceiling (%d)\n",
+           current_thread, mutex->index, TCB_ARRAY[current_thread].priority, mutex->prio_ceil);
+    sys_thread_kill();
+    return; 
+}
+
+  // Check if the thread is trying to lock a mutex it already holds
+  if (TCB_ARRAY[current_thread].held_mutex_bitmap & (1 << mutex->index)) {
+    printk("Warning: Thread %d is trying to lock mutex %d again (double lock)\n", current_thread, mutex->index);
+    return;
+}
+
+  //check if the the mutex is locked, if it is locked, we return to avoid blocking
+  if(mutex->locked_by != NOT_LOCKED)
+  {
+
+      //uint32_t owner_thread = mutex->locked_by;
+      
+      // Apply priority inheritance
+      //if (TCB_ARRAY[owner_thread].priority > TCB_ARRAY[current_thread].priority) {
+       //   TCB_ARRAY[owner_thread].priority = TCB_ARRAY[current_thread].priority;
+      //}
+
       TCB_ARRAY[current_thread].state = WAITING;
       //Add the mutex to the waiting_mutex_bitmap
       TCB_ARRAY[current_thread].waiting_mutex_bitmap = TCB_ARRAY[current_thread].waiting_mutex_bitmap | (1 << mutex->index); 
       //trigger context switch while waiting
-      pend_pendsv(); 
-
+      //pend_pendsv(); 
+      return;
   }
+  
 
   //lock the mutex 
   mutex->locked_by = current_thread;
@@ -770,15 +808,20 @@ void sys_mutex_lock( kmutex_t *mutex ) {
  */
 void sys_mutex_unlock( kmutex_t *mutex ) {
 
-  uint32_t current_thread = sys_get_priority();
+  uint32_t current_thread = global_threads_info.current_thread;
 
-  
   //check if current thread is the one that locked the mutex
   if(mutex->locked_by != current_thread)
   {
     return;
   }
-   
+
+  // Check if the mutex is already unlocked
+  if (!(TCB_ARRAY[current_thread].held_mutex_bitmap & (1 << mutex->index))) {
+    printk("Warning: Thread %d is trying to unlock mutex %d again (double unlock)\n", current_thread, mutex->index);
+    return;
+}
+
   //unlock the mutex
   mutex->locked_by = NOT_LOCKED;
 
@@ -813,9 +856,10 @@ void sys_mutex_unlock( kmutex_t *mutex ) {
       TCB_ARRAY[i].waiting_mutex_bitmap = TCB_ARRAY[i].waiting_mutex_bitmap & ~(1 << mutex->index);
 
       //If the waiting thread has no other mutexes to wait for, set it to READY
+      //try moving this to the thread scheduler
       if(TCB_ARRAY[i].waiting_mutex_bitmap == 0)
       {
-        TCB_ARRAY[i].state = READY;
+        //TCB_ARRAY[i].state = READY;
        
       }
     }
