@@ -142,7 +142,7 @@ typedef struct TCB{
   uint32_t held_mutex_bitmap; /**< Bitmap of held mutexes. */
   uint32_t waiting_mutex_bitmap; /**< Bitmap of waiting mutexes. */
   
-
+  uint8_t processed; /**< Flag indicating if the thread has been processed in current period. */
 } TCB_t;
 
 // Our TCB array which holds corresponding TCBs of our threads
@@ -252,6 +252,7 @@ int thread_scheduler(){
 
         time_left_in_compute = TCB_ARRAY[curr_running].computation_time;
         TCB_ARRAY[curr_running].state = WAITING;
+        TCB_ARRAY[curr_running].processed = 1;
       }
       global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
     }
@@ -262,12 +263,39 @@ int thread_scheduler(){
     int time_left_in_period;
     for (uint32_t i = 0; i < global_threads_info.max_threads; i ++){
       if (TCB_ARRAY[i].state == READY || TCB_ARRAY[i].state == WAITING){
+        
         time_left_in_period = global_threads_info.thread_time_left_in_T[i] - 1;
-        if (time_left_in_period == 0){
-          TCB_ARRAY[i].state = READY;
+        
+        if (time_left_in_period <= 0 ){
+          //Check if the thread is waiting for mutex,
+          // if the thread is waiting for a mutex, it should not be set to ready
+          printk("reset T, C from period\n" );
+          
+
           time_left_in_period = TCB_ARRAY[i].period;
           global_threads_info.thread_time_left_in_C[i] = TCB_ARRAY[i].computation_time;
+          
+
+          if(TCB_ARRAY[i].waiting_mutex_bitmap == 0 && !TCB_ARRAY[i].processed)
+          {
+            TCB_ARRAY[i].state = READY;
+            printk("Thread %d is now ready (scheduler)\n", i);
+          }
+
+          TCB_ARRAY[i].processed = 0;
+          
         }
+
+        //Handle threads that are waiting for mutexes
+        //Unblock them if the mutex is available
+        //if(TCB_ARRAY[i].state == WAITING && TCB_ARRAY[i].waiting_mutex_bitmap == 0 && !TCB_ARRAY[i].processed)
+        //{
+          // If the thread is waiting for a mutex, it should not be set to ready
+        //  TCB_ARRAY[i].state = READY;
+         // printk("Thread %d is now ready (waiting for mutex)\n", i);
+        //}
+        
+        //waiting for other threads
         global_threads_info.thread_time_left_in_T[i] = time_left_in_period;
       }
     }
@@ -457,7 +485,12 @@ int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, ui
      //TCB_ARRAY[i].msp -> PSP = (u_stack_top - (i * global_threads_info.stack_size * 4) - sizeof(interrupt_stack_frame)); // Why cast to pushed_callee_stack?
      TCB_ARRAY[i].state = NEW; //Q: what state should the thread be set to in init?
      TCB_ARRAY[i].svc_status = 0; // Might want to set all svc_status to 0?
-   }
+   
+     TCB_ARRAY[i].held_mutex_bitmap = 0;
+     TCB_ARRAY[i].waiting_mutex_bitmap = 0;
+     TCB_ARRAY[i].processed = 0; 
+    }
+
 
   //Initialize the idle thread
  // threads[max_threads - 1].thread_fn = idle_fn;
@@ -762,24 +795,22 @@ void sys_mutex_lock( kmutex_t *mutex ) {
   if (TCB_ARRAY[current_thread].held_mutex_bitmap & (1 << mutex->index)) {
     printk("Warning: Thread %d is trying to lock mutex %d again (double lock)\n", current_thread, mutex->index);
     return;
-}
+  }
 
   //check if the the mutex is locked, if it is locked, we return to avoid blocking
   if(mutex->locked_by != NOT_LOCKED)
   {
 
       //uint32_t owner_thread = mutex->locked_by;
-      
       // Apply priority inheritance
       //if (TCB_ARRAY[owner_thread].priority > TCB_ARRAY[current_thread].priority) {
        //   TCB_ARRAY[owner_thread].priority = TCB_ARRAY[current_thread].priority;
       //}
-
       TCB_ARRAY[current_thread].state = WAITING;
       //Add the mutex to the waiting_mutex_bitmap
       TCB_ARRAY[current_thread].waiting_mutex_bitmap = TCB_ARRAY[current_thread].waiting_mutex_bitmap | (1 << mutex->index); 
       //trigger context switch while waiting
-      //pend_pendsv(); 
+      pend_pendsv(); 
       return;
   }
   
@@ -852,15 +883,21 @@ void sys_mutex_unlock( kmutex_t *mutex ) {
   {
     if(TCB_ARRAY[i].state == WAITING)
     {
+      printk("Thread %d is waiting for mutex %d\n", i, mutex->index);
       //update the waiting_mutex_bitmap for waiting threads
       TCB_ARRAY[i].waiting_mutex_bitmap = TCB_ARRAY[i].waiting_mutex_bitmap & ~(1 << mutex->index);
 
+      //printk("mutex waiting bitmap: %d\n", TCB_ARRAY[i].waiting_mutex_bitmap);
+      //printk("global_threads_info.thread_time_left_in_C[i]: %d\n", global_threads_info.thread_time_left_in_T[i]);
+
+      printk("processed: %d\n", TCB_ARRAY[i].processed);
       //If the waiting thread has no other mutexes to wait for, set it to READY
       //try moving this to the thread scheduler
-      if(TCB_ARRAY[i].waiting_mutex_bitmap == 0)
+      if(TCB_ARRAY[i].waiting_mutex_bitmap == 0 && TCB_ARRAY[i].processed == 0)
       {
-        //TCB_ARRAY[i].state = READY;
-       
+        TCB_ARRAY[i].state = READY;
+        printk("Thread %d is now ready\n", i);
+        pend_pendsv();
       }
     }
   }
