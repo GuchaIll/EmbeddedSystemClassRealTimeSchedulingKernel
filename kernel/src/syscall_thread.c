@@ -668,9 +668,9 @@
  
  void initialize_mutex_array(){
    for(uint32_t i = 0; i < MAX_MUTEXES; i++){
-     mutex_array[i].locked_by = NOT_LOCKED;
-     mutex_array[i].prio_ceil = 0;
-     mutex_array[i].index = i;
+       mutex_array[i].locked_by = NOT_LOCKED;
+       mutex_array[i].prio_ceil = 0;
+       mutex_array[i].index = i;
    }
  }
  /**
@@ -688,10 +688,11 @@
        mutex_array[mutex_num].locked_by = NOT_LOCKED;
        mutex_array[mutex_num].prio_ceil = max_prio;
        mutex_array[mutex_num].index = mutex_num;
+       global_threads_info.mutex_index = global_threads_info.mutex_index + 1;
        return &mutex_array[mutex_num];
      }
   
-   global_threads_info.mutex_index = global_threads_info.mutex_index + 1;
+   //global_threads_info.mutex_index = global_threads_info.mutex_index + 1;
    return NULL;
  }
  
@@ -719,7 +720,7 @@
     // sys_thread_kill();
     // return;
    //}
- 
+    //breakpoint();
     // Check if the current thread's priority is less than or equal to the mutex's priority ceiling
     if (current_thread < mutex->prio_ceil) {
      printk("Warning: Thread %d cannot lock mutex %d because (%d) high priority(%d)\n",
@@ -740,10 +741,11 @@
    if(mutex->locked_by != NOT_LOCKED)
    {
  
-       //uint32_t owner_thread = mutex->locked_by;
+      //uint32_t owner_thread = mutex->locked_by;
+      // printk("owner_thread: %d\n", owner_thread);
        // Apply priority inheritance
-       //if (TCB_ARRAY[owner_thread].priority > TCB_ARRAY[current_thread].priority) {
-        //   TCB_ARRAY[owner_thread].priority = TCB_ARRAY[current_thread].priority;
+      // if (TCB_ARRAY[owner_thread].priority > TCB_ARRAY[current_thread].priority) {
+       //    TCB_ARRAY[owner_thread].priority = TCB_ARRAY[current_thread].priority;
        //}
 
        TCB_ARRAY[current_thread].state = BLOCKED;
