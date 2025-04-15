@@ -627,18 +627,18 @@
   * Transitions the thread to the DONE state and selects the next thread to run.
   */
  void sys_thread_kill(){
-   uint32_t priority = sys_get_priority();
+   uint32_t current_thread = global_threads_info.current_thread;
    // uint32_t max_threads = global_threads_info.max_threads;
-   if (priority == global_threads_info.max_threads+1){ // Default Thread Is Called It
+   if (current_thread == global_threads_info.max_threads+1){ // Default Thread Is Called It
      sys_exit(1);
    }
-   else if(priority == global_threads_info.max_threads){// Idle Thread is Calling It 
+   else if(current_thread == global_threads_info.max_threads){// Idle Thread is Calling It 
      // run default idle
      interrupt_stack_frame * psp = (interrupt_stack_frame *)(TCB_ARRAY[global_threads_info.max_threads].msp -> PSP);
      psp -> pc = (uint32_t) &default_idle_fn;
    }
    else{
-     TCB_ARRAY[priority].state = DONE;
+     TCB_ARRAY[current_thread].state = DONE;
      // for (uint32_t i = 0; i < max_threads; i ++){
  
      // }
@@ -655,12 +655,14 @@
   * to invoke the scheduler.
   */
  void sys_wait_until_next_period(){ //needs fixing
-   int current_thread = global_threads_info.current_thread;
+   uint32_t current_thread = global_threads_info.current_thread;
    //check if the thread is holding mutex
-   if(TCB_ARRAY[current_thread].held_mutex_bitmap != 0){
-     printk("Warning: Thread %d is holding a mutex and cannot wait until next period\n", current_thread);
-     //return;
+   if(current_thread == global_threads_info.max_threads)
+   {
+      printk("Warning: Idle thread call in wait til next period\n");
+     return;
    }
+ 
    TCB_ARRAY[current_thread].state = WAITING;
  
    pend_pendsv();
@@ -705,48 +707,43 @@
   * @param[in] mutex Pointer to the mutex to lock.
   */
  void sys_mutex_lock( kmutex_t *mutex ) {
+
+   int saved_int = save_interrupt_state_and_disable();
+   disable_interrupts();
  
    uint32_t current_thread = global_threads_info.current_thread;
  
-   //printk("Time: %d, Thread %d attempting to lock mutex %d\n", sys_get_time(), current_thread, mutex->index);
+   //printk("Time: %d, Thread %d attempting to lock mutex %d\n", sys_get_time(), current_thread, mutex->index)
 
-   //Q: checking for sufficient priority: 
-   //check if the current thread's priority is less than or equal to the mutex's priority ceiling
-   //In other words, make sure the thread has sufficient priority to acquire the mutex
-   //if(TCB_ARRAY[current_thread].priority > mutex->prio_ceil)
-   //{
-     //Terminate the thread if it does not have sufficient priority
-    // printk("Warning: Thread %d does not have sufficient priority to acquire mutex %d\n", current_thread, mutex->index);
-    // sys_thread_kill();
-    // return;
-   //}
-    //breakpoint();
+    if(current_thread == global_threads_info.max_threads)
+   {
+     restore_interrupt_state(saved_int);
+     return;
+   }
+
+   
+   
+
     // Check if the current thread's priority is less than or equal to the mutex's priority ceiling
     if (current_thread < mutex->prio_ceil) {
      printk("Warning: Thread %d cannot lock mutex %d because (%d) high priority(%d)\n",
             current_thread, mutex->index, TCB_ARRAY[current_thread].priority, mutex->prio_ceil);
             breakpoint();
          sys_thread_kill();
-
+         restore_interrupt_state(saved_int);
          return; 
  }
  
    // Check if the thread is trying to lock a mutex it already holds
    if (TCB_ARRAY[current_thread].held_mutex_bitmap & (1 << mutex->index)) {
      printk("Warning: Thread %d is trying to lock mutex %d again (double lock)\n", current_thread, mutex->index);
+    restore_interrupt_state(saved_int);
      return;
    }
  
    //check if the the mutex is locked, if it is locked, we return to avoid blocking
    if(mutex->locked_by != NOT_LOCKED)
    {
- 
-      //uint32_t owner_thread = mutex->locked_by;
-      // printk("owner_thread: %d\n", owner_thread);
-       // Apply priority inheritance
-      // if (TCB_ARRAY[owner_thread].priority > TCB_ARRAY[current_thread].priority) {
-       //    TCB_ARRAY[owner_thread].priority = TCB_ARRAY[current_thread].priority;
-       //}
 
        TCB_ARRAY[current_thread].state = BLOCKED;
 
@@ -755,7 +752,9 @@
        //trigger context switch while waiting
 
        //printk("Time: %d Thread %d is blocked waiting for mutex %d\n", sys_get_time(), current_thread, mutex->index);
+       restore_interrupt_state(saved_int);
        pend_pendsv(); 
+       
        return;
    }
    
@@ -775,6 +774,9 @@
    
    TCB_ARRAY[current_thread].waiting_mutex_bitmap = TCB_ARRAY[current_thread].waiting_mutex_bitmap &  ~(1 << mutex->index); 
    //printk("Time: %d, Thread %d locked mutex %d\n", sys_get_time(), current_thread, mutex->index);
+
+   restore_interrupt_state(saved_int);
+   pend_pendsv();
  }
  
  /**
@@ -789,11 +791,20 @@
    uint32_t current_thread = global_threads_info.current_thread;
    //printk("Time: %d, Thread %d attempting to unlock mutex %d\n", sys_get_time(), current_thread, mutex->index);
    //check if current thread is the one that locked the mutex
+
+   if(mutex->locked_by == NOT_LOCKED)
+   {
+     printk("Warning: Thread %d is trying to unlock an already unlocked mutex %d\n", current_thread, mutex->index);
+     return;
+   }
+   
    if(mutex->locked_by != current_thread)
    {
      printk("Warning: Thread %d is trying to unlock mutex %d that it does not own\n", current_thread, mutex->index);
      return;
    }
+
+   
  
    // Check if the mutex is already unlocked
    if (!(TCB_ARRAY[current_thread].held_mutex_bitmap & (1 << mutex->index))) {
