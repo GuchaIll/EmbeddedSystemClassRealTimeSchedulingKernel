@@ -99,8 +99,7 @@
        READY, //process ready to run
        RUNNING, //process running
        WAITING, //process waiting for event
-       DONE, //Exit
-       BLOCKED //process blocked by mutex
+       DONE //Exit
  } thread_state_t;
  
  /**
@@ -257,7 +256,7 @@
        }
        global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
      }
-      else{
+     else{
        TCB_ARRAY[curr_running].state = RUNNING;
      }
  
@@ -276,12 +275,13 @@
            time_left_in_period = TCB_ARRAY[i].period;
            global_threads_info.thread_time_left_in_C[i] = TCB_ARRAY[i].computation_time;
            
-           
-            TCB_ARRAY[i].state = READY;
-            printk("Thread %d is now ready (scheduler)\n", i);
-          
+           //if(TCB_ARRAY[i].waiting_mutex_bitmap == 0 && !TCB_ARRAY[i].processed)
+           //{
+             TCB_ARRAY[i].state = READY;
+             printk("Time: %d, Thread %d is now ready (scheduler) \n", sys_get_time(), i);
+           //}
  
-           
+           //TCB_ARRAY[i].processed = 0;
            
          }
  
@@ -297,15 +297,14 @@
          //waiting for other threads
          global_threads_info.thread_time_left_in_T[i] = time_left_in_period;
        }
-     
      }
      
      clear_systick_flag();
  }
  else{
-
   if (curr_running != max_threads && curr_running != max_threads + 1){
-    int time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running];
+    int time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running] - 1;
+    //global_threads_info.thread_time[curr_running] ++;
     if (time_left_in_compute == 0){
 
       //check if the thread is holding any mutexes
@@ -338,13 +337,13 @@
         time_left_in_period = TCB_ARRAY[i].period;
         global_threads_info.thread_time_left_in_C[i] = TCB_ARRAY[i].computation_time;
         
-       
-           TCB_ARRAY[i].state = READY;
-           printk("Thread %d is now ready (scheduler, pend sv, non tick)\n", i);
-      
-      
-        
+        //if(TCB_ARRAY[i].waiting_mutex_bitmap == 0 && !TCB_ARRAY[i].processed)
+        //{
+          TCB_ARRAY[i].state = READY;
+          printk("Time: %d, Thread %d is now ready (scheduler) \n", sys_get_time(), i);
+        //}
 
+        //TCB_ARRAY[i].processed = 0;
         
       }
 
@@ -360,12 +359,9 @@
       //waiting for other threads
       global_threads_info.thread_time_left_in_T[i] = time_left_in_period;
     }
-  
   }
-  
-  
-}
- 
+
+ }
    /**RMS */
  
    /* Pick next thread to run based on algorithm and current thread with status Running */
@@ -386,30 +382,19 @@
  
    /**IPCP HLP */
    int highest_priority_thread = -1;
-   uint32_t highest_priority = max_threads + 1; 
+   uint32_t highest_priority = max_threads + 1;
  
-   if(sys_get_time() < 201)
-   {
-    //printk("Time: %d Thread 0 is in state %d curr running %d\n", sys_get_time(), TCB_ARRAY[0].state, curr_running);
-
-   }
-
    //find the thread with highest dynamic priority
    for(uint32_t i = 0; i < max_threads; i++)
    {
-    
-     
        if(TCB_ARRAY[i].state == READY)
        {
            //printk("Thread %d is ready with priority %d\n", i, TCB_ARRAY[i].priority);
            //check if the thread is holding any mutexes, if it is waiting for any mutexes
-          
-          
-           if(TCB_ARRAY[i].priority < highest_priority && TCB_ARRAY[i].waiting_mutex_bitmap == 0) // 
+           if(TCB_ARRAY[i].priority < highest_priority  && TCB_ARRAY[i].waiting_mutex_bitmap == 0) //
            {
                highest_priority = TCB_ARRAY[i].priority;
                highest_priority_thread = i;
-              
            }
        }
    }
@@ -417,19 +402,17 @@
    //if a thread is found, return the highest priority thread
    if(highest_priority_thread != -1)
    {
-       //printk("next thread to run is %d with priority %d\n", highest_priority_thread, highest_priority  );
+       printk("Time: %d, curr_Thread: %d next thread: %d priority: %d, C: %d\n", sys_get_time(), curr_running, highest_priority_thread, highest_priority, global_threads_info.thread_time_left_in_C[curr_running]);
        return highest_priority_thread;
-       
    }
  
    //if no ready threads are found, check if there are any waiting threads
    //run idle if there are still waiting threads
    for(uint32_t i = 0; i < max_threads; i++)
    {
-       if(TCB_ARRAY[i].state == WAITING || TCB_ARRAY[i].state == BLOCKED)
+       if(TCB_ARRAY[i].state == WAITING)
        {
          //run idle thread
-           
            return max_threads;
        }
    }
@@ -876,7 +859,7 @@
    }
  
    //check if the the mutex is locked, if it is locked, we return to avoid blocking
-   if(mutex->locked_by != NOT_LOCKED)
+   while(mutex->locked_by != NOT_LOCKED)
    {
  
        //uint32_t owner_thread = mutex->locked_by;
@@ -884,16 +867,12 @@
        //if (TCB_ARRAY[owner_thread].priority > TCB_ARRAY[current_thread].priority) {
         //   TCB_ARRAY[owner_thread].priority = TCB_ARRAY[current_thread].priority;
        //}
-
-       TCB_ARRAY[current_thread].state = BLOCKED;
-
+       TCB_ARRAY[current_thread].state = WAITING;
        //Add the mutex to the waiting_mutex_bitmap
        TCB_ARRAY[current_thread].waiting_mutex_bitmap = TCB_ARRAY[current_thread].waiting_mutex_bitmap | (1 << mutex->index); 
        //trigger context switch while waiting
-
-       printk("Time: %d Thread %d is blocked waiting for mutex %d\n", sys_get_time(), current_thread, mutex->index);
        pend_pendsv(); 
-       return;
+       //return;
    }
    
  
@@ -909,7 +888,6 @@
    //set the bit corresponding to the mutex index in the held_mutex_bitmap
    TCB_ARRAY[current_thread].held_mutex_bitmap = TCB_ARRAY[current_thread].held_mutex_bitmap | (1 << mutex->index); 
    //clear the bit corresponding to the mutex index in the waiting_mutex_bitmap
-   
    TCB_ARRAY[current_thread].waiting_mutex_bitmap = TCB_ARRAY[current_thread].waiting_mutex_bitmap &  ~(1 << mutex->index); 
  }
  
@@ -964,13 +942,10 @@
    //If there are any threads waiting for the mutex, wake them up
    for(uint32_t i = 0; i < global_threads_info.max_threads; i++)
    {
-    printk("Thread %d state: %d\n", i, TCB_ARRAY[i].state);
-
-       if(TCB_ARRAY[i].state == BLOCKED)
-     {
-       //printk("Thread %d is waiting for mutex %d\n", i, mutex->index);
+     
+       printk("Thread %d is waiting for mutex %d\n", i, mutex->index);
        //update the waiting_mutex_bitmap for waiting threads
-          TCB_ARRAY[i].waiting_mutex_bitmap = TCB_ARRAY[i].waiting_mutex_bitmap & ~(1 << mutex->index);
+       TCB_ARRAY[i].waiting_mutex_bitmap = TCB_ARRAY[i].waiting_mutex_bitmap & ~(1 << mutex->index);
  
        //printk("mutex waiting bitmap: %d\n", TCB_ARRAY[i].waiting_mutex_bitmap);
        //printk("global_threads_info.thread_time_left_in_C[i]: %d\n", global_threads_info.thread_time_left_in_T[i]);
@@ -978,14 +953,16 @@
        //printk("processed: %d\n", TCB_ARRAY[i].processed);
        //If the waiting thread has no other mutexes to wait for, set it to READY
        //try moving this to the thread scheduler
-      
-       if(TCB_ARRAY[i].waiting_mutex_bitmap == 0)
-       {
-         TCB_ARRAY[i].state = READY;
-         printk("Thread %d ready, set from Blocked\n", i);
-         //pend_pendsv();
-       }
-    }
-  }
-  pend_pendsv();
+
+       //if(TCB_ARRAY[i].waiting_mutex_bitmap == 0)
+       //{
+        // TCB_ARRAY[i].state = READY;
+        // printk("Thread %d is now ready\n", i);
+        // pend_pendsv();
+      // }
+     
+   }
+ 
+   pend_pendsv();
+ 
  }
