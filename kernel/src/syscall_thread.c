@@ -88,6 +88,7 @@
  
      uint32_t ready_threads[16];  /**< Array of ready threads. */
      uint32_t waiting_threads[16]; /**< Array of waiting threads. */
+     uint32_t mutex_index;
    } global_threads_info_t;
  
  /**
@@ -385,6 +386,7 @@
  int sys_thread_init(uint32_t max_threads, uint32_t stack_size, void *idle_fn, uint32_t max_mutexes){
    global_threads_info.max_mutexes = max_mutexes;
    global_threads_info.max_threads = max_threads;
+   global_threads_info.mutex_index = 0;
  
    uint32_t size = 256;
    while (size < stack_size){
@@ -680,14 +682,16 @@
   * @return Pointer to the initialized mutex.
   */
  kmutex_t *sys_mutex_init( uint32_t max_prio ) {
-   for(uint32_t i = 0; i < MAX_MUTEXES; i++){
-     if (mutex_array[i].locked_by == NOT_LOCKED){
-       mutex_array[i].locked_by = NOT_LOCKED;
-       mutex_array[i].prio_ceil = max_prio;
-       mutex_array[i].index = i;
-       return &mutex_array[i];
+    
+    uint32_t mutex_num = global_threads_info.mutex_index;
+     if (mutex_array[mutex_num].locked_by == NOT_LOCKED ){
+       mutex_array[mutex_num].locked_by = NOT_LOCKED;
+       mutex_array[mutex_num].prio_ceil = max_prio;
+       mutex_array[mutex_num].index = mutex_num;
+       return &mutex_array[mutex_num];
      }
-   }
+  
+   global_threads_info.mutex_index = global_threads_info.mutex_index + 1;
    return NULL;
  }
  
@@ -717,11 +721,13 @@
    //}
  
     // Check if the current thread's priority is less than or equal to the mutex's priority ceiling
-    if (TCB_ARRAY[current_thread].priority < mutex->prio_ceil) {
-     printk("Warning: Thread %d cannot lock mutex %d because its priority (%d) is higher than the mutex's priority ceiling (%d)\n",
+    if (current_thread < mutex->prio_ceil) {
+     printk("Warning: Thread %d cannot lock mutex %d because (%d) high priority(%d)\n",
             current_thread, mutex->index, TCB_ARRAY[current_thread].priority, mutex->prio_ceil);
-     sys_thread_kill();
-     return; 
+            breakpoint();
+         sys_thread_kill();
+
+         return; 
  }
  
    // Check if the thread is trying to lock a mutex it already holds
@@ -789,7 +795,7 @@
  
    // Check if the mutex is already unlocked
    if (!(TCB_ARRAY[current_thread].held_mutex_bitmap & (1 << mutex->index))) {
-     printk("Warning: Thread %d is trying to unlock mutex %d again (double unlock)\n", current_thread, mutex->index);
+     printk("Warning:  (double unlock)\n");
      return;
  }
  
@@ -834,8 +840,7 @@
        if(TCB_ARRAY[i].waiting_mutex_bitmap == 0)
        {
          TCB_ARRAY[i].state = READY;
-         //printk("Thread %d ready, set from Blocked\n", i);
-         //pend_pendsv();
+         
        }
     }
   }
