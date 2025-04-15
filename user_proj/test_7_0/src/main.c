@@ -14,7 +14,7 @@
  * t=75    Thread 1        Prio: 1 Cnt: 1
  * t=150   Thread 2        Prio: 2 Cnt: 0
  * t=150   Thread 2        Prio: 0 Cnt: 1
- * t=500   Thread 2        Prio: 0 Cnt: 3
+ * t=500   Thread 2        Prio: 0 Cnt: 2
  * t=500   Thread 0        Prio: 0 Cnt: 2
  * t=500   Thread 0        Prio: 0 Cnt: 3
  * t=580   Thread 2        Prio: 1 Cnt: 3
