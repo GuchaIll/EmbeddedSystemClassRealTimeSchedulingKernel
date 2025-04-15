@@ -22,7 +22,5 @@ void systick_delay();
 
 uint32_t systick_get_ticks();
 
-void systick_c_handler();
-
 void clear_systick_flag();
 #endif /* _SYSTICK_H_ */

@@ -82,6 +82,8 @@ void thread_1( void *vargp ) {
 
     spin_wait( 50 - REDUCE_SPIN_MS );
 
+    //printf("Thread 1: finish compute time, trying to unlock %ld\n", get_time() );
+
     print_status( "1 unlocked" );
     mutex_unlock( mutex );
 

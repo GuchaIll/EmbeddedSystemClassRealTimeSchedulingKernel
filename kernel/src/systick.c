@@ -132,14 +132,3 @@ void clear_systick_flag() {
 /* Calls pendSV -
     Programming maneual Page 225 talks about the ICSR register bits 28 for 
     setting bit and 27 for clearing from the System Control Block/ nvm thats given to us*/
-/**
- * @brief SysTick interrupt handler.
- *
- * This function is called every time the SysTick timer expires. It increments the
- * total tick count, sets the SysTick flag, and triggers a PendSV interrupt for scheduling.
- */
-void systick_c_handler() {
-    sysTickFlag = 1;
-    total_count = total_count + 1;
-    pend_pendsv();
-}

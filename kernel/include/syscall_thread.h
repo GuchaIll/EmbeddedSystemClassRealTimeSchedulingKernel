@@ -146,4 +146,7 @@ void sys_wait_until_next_period( void );
 */
 void sys_thread_kill( void );
 
+void systick_c_handler();
+
 #endif /* _SYSCALL_THREAD_H_ */
+
