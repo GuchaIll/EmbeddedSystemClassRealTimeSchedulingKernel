@@ -839,8 +839,6 @@
    //update the dynamic priority of the thread
    TCB_ARRAY[current_thread].priority = new_priority;
 
-  
- 
    //If there are any threads waiting for the mutex, wake them up
    for(uint32_t i = 0; i < global_threads_info.max_threads; i++)
    {
@@ -853,7 +851,6 @@
        
     }
   }
-  //printk("Calling from unlock\n");
   pend_pendsv();
  }
 
