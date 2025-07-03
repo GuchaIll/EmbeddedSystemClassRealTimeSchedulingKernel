@@ -172,6 +172,43 @@
   * @brief Pointer to the low address of the kernel stack.
   */
  uint32_t *k_stack_low;
+
+
+ /**
+  * 
+  * SysTick Timer Expires
+        ↓
+systick_c_handler()
+        ↓
+[1] Decrement current thread's computation time
+[2] Check if current thread exhausted time → WAITING
+[3] Check all threads for period completion → READY
+[4] pend_pendsv()
+        ↓
+PendSV Interrupt
+        ↓
+pendsv_c_handler()
+        ↓
+[1] Save current thread context (registers, stack)
+[2] Call thread_scheduler()
+        ↓
+thread_scheduler()
+        ↓
+[1] Unblock threads no longer waiting for mutexes
+[2] Set RUNNING threads to READY
+[3] Find highest priority READY thread (RMS)
+[4] Consider IPCP constraints (waiting_mutex_bitmap)
+[5] Return selected thread ID
+        ↓
+[3] Load selected thread's context
+[4] Set selected thread to RUNNING
+[5] Return new stack pointer
+        ↓
+Hardware restores context and jumps to selected thread
+        ↓
+Selected thread continues execution
+
+  */
  
  /* ub_test(C, T)
    1. Computes C/T of new thread 
@@ -246,9 +283,9 @@
 
    // Sets all to ready
    for(uint32_t i = 0; i < global_threads_info.max_threads; i++){
-     if (TCB_ARRAY[i].state == RUNNING){
-       TCB_ARRAY[i].state = READY;
-     }
+      if (TCB_ARRAY[i].state == RUNNING){
+        TCB_ARRAY[i].state = READY;
+      }
    }
 
  
@@ -322,10 +359,7 @@
  
    
      TCB_t * TCB = &TCB_ARRAY[current_thread]; //tcb context automatically stores the entire context
-   
-     /** You might have to alter it but the TA said we do not need to set the register individually here,
-      * could just set TCB->msp = *callee_saved_stk
-      */
+  
      TCB->msp = callee_saved_stk;
      TCB->svc_status = svc_stat; 
      int priority = thread_scheduler();
@@ -336,9 +370,6 @@
  
      svc_stat = next_TCB -> svc_status;
      set_svc_status(svc_stat);
- 
-     global_threads_info.waiting_threads[priority] = 400;
-     global_threads_info.ready_threads[priority] = 400;
  
      /* Load pointer to TCB to return value*/
      return next_TCB -> msp;
@@ -397,7 +428,6 @@
    uint32_t *k_stack_top = (uint32_t *) &__thread_k_stacks_top;
    uint32_t *u_stack_top = (uint32_t *) &__thread_u_stacks_top;
  
-   //Q: the handout said that kernel and user stacks are initiated differently?
     for(uint32_t i = 0; i < max_threads+2; i++) {
       
       uint32_t *aligned_k_stack_top = k_stack_top - (i * global_threads_info.stack_size ) - sizeof(pushed_callee_stack_frame) / sizeof(uint32_t);
@@ -413,14 +443,13 @@
      }
  
    //Initialize the idle thread
-  // threads[max_threads - 1].thread_fn = idle_fn;
   //assuming max value for max_threads is 14
   
   if (idle_fn == NULL) {
    idle_fn = default_idle_fn; // Use default idle function for the user input null idle fn
  }
-   // ?? I think idle thread goes into second to last priority and default goes into last
-   // Also should set the default thread to be running
+   
+   //  set the default thread to be running
  
     int prio_idle = max_threads;
     TCB_ARRAY[prio_idle].computation_time = 0x1;
@@ -626,7 +655,7 @@
   * Transitions the thread to the WAITING state and triggers the PendSV interrupt
   * to invoke the scheduler.
   */
- void sys_wait_until_next_period(){ //needs fixing
+ void sys_wait_until_next_period(){ 
    uint32_t current_thread = global_threads_info.current_thread;
    //check if the thread is holding mutex
    if(current_thread == global_threads_info.max_threads)
@@ -711,9 +740,7 @@
        
        printk("Time:  Thread %d is blocked trying to lock %d\n",  current_thread, mutex->index);
        pend_pendsv(); 
-
-        // WHAT I ADDED 
-
+       
         while (mutex->locked_by != NOT_LOCKED){}
         mutex->locked_by = current_thread;
 
@@ -734,12 +761,12 @@
    for (uint32_t i = 0; i < global_threads_info.max_mutexes; i++) {
     if ((mutex_array[i].locked_by != NOT_LOCKED) && (mutex_array[i].prio_ceil <= TCB_ARRAY[current_thread].priority)) {
 
-      //  printk("The locked_by for 0 is %d and i is %d and mutex -> index is %d\n", mutex_array[0].locked_by, i, mutex -> index);
+      
       if(i == mutex->index || mutex_array[i].locked_by == current_thread){continue;}
         // If the mutex is already locked by another thread with a higher priority ceiling, block the current thread
         // In otherwords its a check about scheduler working properly
         // Its getting hung with the fact that this thread is calling lock on mutex with ceiling 1 and then 0
-        // Which is 
+      
         printk("Warning: Thread %d cannot lock mutex %d because another thread holds a mutex with a higher prio ceiling: %d.\n",
                current_thread, mutex->index, i);
         return;
@@ -856,7 +883,7 @@ void systick_c_handler() {
     int time_left_in_compute = global_threads_info.thread_time_left_in_C[curr_running] - 1;
     
     if (time_left_in_compute == 0){
-
+      // Thread finished its computation time
      if (TCB_ARRAY[curr_running].held_mutex_bitmap != 0) {
        printk("Warning: Thread %d is holding a mutex and has finished computation time. \n", curr_running);
    }
@@ -868,11 +895,12 @@ void systick_c_handler() {
     global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
   }
 
+  //Check for Period Completions
   for (uint32_t i = 0; i < global_threads_info.max_threads; i ++){
     if (TCB_ARRAY[i].state == READY || TCB_ARRAY[i].state == WAITING || TCB_ARRAY[i].state == RUNNING){
       
       if (sys_get_time() % TCB_ARRAY[i].period == 0){
-       
+       // Thread's new period starts - release the thread
           global_threads_info.thread_time_left_in_C[i] = TCB_ARRAY[i].computation_time;   
          TCB_ARRAY[i].state = READY;
       }
