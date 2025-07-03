@@ -60,15 +60,15 @@
   * and program status register (PSR).
   */
  typedef struct {
-   uint32_t r0;   /**< General-purpose register R0. */
-   uint32_t r1;   /**< General-purpose register R1. */
-   uint32_t r2;   /**< General-purpose register R2. */
-   uint32_t r3;   /**< General-purpose register R3. */
-   uint32_t r12;  /**< General-purpose register R12. */
-   uint32_t lr;   /**< Link register (LR). */
-   uint32_t pc;   /**< Program counter (PC). */
-   uint32_t xPSR; /**< Program status register (PSR). */
- } interrupt_stack_frame;
+    uint32_t r0;   /**< General-purpose register R0. */
+    uint32_t r1;   /**< General-purpose register R1. */
+    uint32_t r2;   /**< General-purpose register R2. */
+    uint32_t r3;   /**< General-purpose register R3. */
+    uint32_t r12;  /**< General-purpose register R12. */
+    uint32_t lr;   /**< Link register (LR). */
+    uint32_t pc;   /**< Program counter (PC). */
+    uint32_t xPSR; /**< Program status register (PSR). */
+  } interrupt_stack_frame;
  
  /**
   * @struct global_threads_info_t
@@ -96,12 +96,12 @@
   * @brief Enumeration of thread states.
   */
  typedef enum thread_state{
-       NEW, //process created
-       READY, //process ready to run
-       RUNNING, //process running
-       WAITING, //process waiting for event
-       DONE, //Exit
-       BLOCKED //process blocked by mutex
+      NEW, //process created
+      READY, //process ready to run
+      RUNNING, //process running
+      WAITING, //process waiting for event
+      DONE, //Exit
+      BLOCKED //process blocked by mutex
  } thread_state_t;
  
  /**
@@ -110,16 +110,16 @@
   */
  /* Stack frame pushed onto MSP before intiating context switch */
  typedef struct {
-   uint32_t *PSP;   /**< Pointer to the thread's Process Stack Pointer (PSP). */
-   uint32_t r4;    /**< Register value for r4 */
-   uint32_t r5;    /**< General-purpose register R5. */
-   uint32_t r6;    /**< General-purpose register R6. */
-   uint32_t r7;    /**< General-purpose register R7. */
-   uint32_t r8;    /**< General-purpose register R8. */
-   uint32_t r9;    /**< General-purpose register R9. */
-   uint32_t r10;   /**< General-purpose register R10. */
-   uint32_t r11;   /**< General-purpose register R11. */
-   uint32_t lr;    /**< Link register (LR). */
+    uint32_t *PSP;   /**< Pointer to the thread's Process Stack Pointer (PSP). */
+    uint32_t r4;    /**< Register value for r4 */
+    uint32_t r5;    /**< General-purpose register R5. */
+    uint32_t r6;    /**< General-purpose register R6. */
+    uint32_t r7;    /**< General-purpose register R7. */
+    uint32_t r8;    /**< General-purpose register R8. */
+    uint32_t r9;    /**< General-purpose register R9. */
+    uint32_t r10;   /**< General-purpose register R10. */
+    uint32_t r11;   /**< General-purpose register R11. */
+    uint32_t lr;    /**< Link register (LR). */
  
  } pushed_callee_stack_frame;
  
@@ -132,19 +132,19 @@
   */
  /* TCB struct that keeps track of thread main and program stack contexts and critical timing information*/
  typedef struct TCB{
-   pushed_callee_stack_frame *msp;   /**< Pointer to the thread's kernel stack. */
+    pushed_callee_stack_frame *msp;   /**< Pointer to the thread's kernel stack. */
  
-   uint32_t priority;                /**< Dynamic Thread priority (0-16). */
-   uint32_t computation_time;        /**< Computation time (C) in ticks. */
-   uint32_t period;                  /**< Period (T) in ticks. */
-   uint32_t svc_status;              /**< SVC status (privileged/unprivileged). */
+    uint32_t priority;                /**< Dynamic Thread priority (0-16). */
+    uint32_t computation_time;        /**< Computation time (C) in ticks. */
+    uint32_t period;                  /**< Period (T) in ticks. */
+    uint32_t svc_status;              /**< SVC status (privileged/unprivileged). */
  
-   thread_state_t state;             /**< Current state of the thread. */
+    thread_state_t state;             /**< Current state of the thread. */
  
-   uint32_t held_mutex_bitmap; /**< Bitmap of held mutexes. */
-   uint32_t waiting_mutex_bitmap; /**< Bitmap of waiting mutexes. */
+    uint32_t held_mutex_bitmap; /**< Bitmap of held mutexes. */
+    uint32_t waiting_mutex_bitmap; /**< Bitmap of waiting mutexes. */
    
-   uint8_t processed; /**< Flag indicating if the thread has been processed in current period. */
+    uint8_t processed; /**< Flag indicating if the thread has been processed in current period. */
  } TCB_t;
  
  // Our TCB array which holds corresponding TCBs of our threads
@@ -188,21 +188,21 @@
   * @return 0 if the thread passes the UB test, -1 otherwise.
   */
  int ub_test(int C, int T){
-   int max_threads = global_threads_info.max_threads;
-   float utilization = (float)C/T;
-   int compute, period = 0;
-   int count = 1;
-   for (int index = 0; index < max_threads; index ++){
-     if (TCB_ARRAY[index].state == NEW || TCB_ARRAY[index].state == DONE){continue;} // Uninitialized Thread Index in TCB Array
-     compute = TCB_ARRAY[index].computation_time;
-     period = TCB_ARRAY[index].period;
-     utilization += (float)compute/period;
-     count ++;
-   }
-   if (utilization <= ub_table[count]){
-     return 0;
-   }
-   return -1;
+    int max_threads = global_threads_info.max_threads;
+    float utilization = (float)C/T;
+    int compute, period = 0;
+    int count = 1;
+    for (int index = 0; index < max_threads; index ++){
+      if (TCB_ARRAY[index].state == NEW || TCB_ARRAY[index].state == DONE){continue;} // Uninitialized Thread Index in TCB Array
+      compute = TCB_ARRAY[index].computation_time;
+      period = TCB_ARRAY[index].period;
+      utilization += (float)compute/period;
+      count ++;
+    }
+    if (utilization <= ub_table[count]){
+      return 0;
+    }
+    return -1;
  }
  
  /* sysTickFlag:
@@ -233,11 +233,9 @@
    
    for(uint32_t i = 0; i < global_threads_info.max_threads; i++)
    {
-
        if(TCB_ARRAY[i].state == BLOCKED)
      {
        //update the waiting_mutex_bitmap for waiting threads
-        
         if(TCB_ARRAY[i].waiting_mutex_bitmap == 0)
         {
           TCB_ARRAY[i].state = READY;
@@ -329,15 +327,11 @@
       * could just set TCB->msp = *callee_saved_stk
       */
      TCB->msp = callee_saved_stk;
- 
-     TCB->svc_status = svc_stat;
-   
+     TCB->svc_status = svc_stat; 
      int priority = thread_scheduler();
  
      global_threads_info.current_thread = priority;
- 
      TCB_t * next_TCB = &TCB_ARRAY[priority];
- 
      next_TCB -> state = RUNNING;
  
      svc_stat = next_TCB -> svc_status;
@@ -398,7 +392,7 @@
    }
  
    global_threads_info.tick_counter = 0;
- 
+
    //allocate space for kernel and user stacks
    uint32_t *k_stack_top = (uint32_t *) &__thread_k_stacks_top;
    uint32_t *u_stack_top = (uint32_t *) &__thread_u_stacks_top;
@@ -415,10 +409,8 @@
       TCB_ARRAY[i].svc_status = 0; // Might want to set all svc_status to 0?
     
       TCB_ARRAY[i].held_mutex_bitmap = 0;
-      TCB_ARRAY[i].waiting_mutex_bitmap = 0;
-   
+      TCB_ARRAY[i].waiting_mutex_bitmap = 0;  
      }
- 
  
    //Initialize the idle thread
   // threads[max_threads - 1].thread_fn = idle_fn;
@@ -430,61 +422,59 @@
    // ?? I think idle thread goes into second to last priority and default goes into last
    // Also should set the default thread to be running
  
-   int prio_idle = max_threads;
-   TCB_ARRAY[prio_idle].computation_time = 0x1;
-   TCB_ARRAY[prio_idle].period = 0x1;
-   TCB_ARRAY[prio_idle].priority = prio_idle;
+    int prio_idle = max_threads;
+    TCB_ARRAY[prio_idle].computation_time = 0x1;
+    TCB_ARRAY[prio_idle].period = 0x1;
+    TCB_ARRAY[prio_idle].priority = prio_idle;
  
-   interrupt_stack_frame *user_sp = (interrupt_stack_frame *)TCB_ARRAY[prio_idle].msp->PSP;
+    interrupt_stack_frame *user_sp = (interrupt_stack_frame *)TCB_ARRAY[prio_idle].msp->PSP;
  
-   user_sp->r0 = 0;
-   user_sp->r1 = 0;
-   user_sp->r2 = 0;
-   user_sp->r3 = 0;
-   user_sp->r12 = 0;
-   user_sp->lr = (uint32_t)&thread_kill; // changed from default
-   user_sp->pc = (uint32_t) idle_fn;
-   user_sp->xPSR = XPSR_INIT;
+    user_sp->r0 = 0;
+    user_sp->r1 = 0;
+    user_sp->r2 = 0;
+    user_sp->r3 = 0;
+    user_sp->r12 = 0;
+    user_sp->lr = (uint32_t)&thread_kill; // changed from default
+    user_sp->pc = (uint32_t) idle_fn;
+    user_sp->xPSR = XPSR_INIT;
  
-   TCB_ARRAY[prio_idle].msp->r4 = 0;
-   TCB_ARRAY[prio_idle].msp->r5 = 0;
-   TCB_ARRAY[prio_idle].msp->r6 = 0;
-   TCB_ARRAY[prio_idle].msp->r7 = 0;
-   TCB_ARRAY[prio_idle].msp->r8 = 0;
-   TCB_ARRAY[prio_idle].msp->r9 = 0;
-   TCB_ARRAY[prio_idle].msp->r10 = 0;
-   TCB_ARRAY[prio_idle].msp->r11 = 0;
-   TCB_ARRAY[prio_idle].msp->lr = LR_RETURN_TO_USER_PSP;
+    TCB_ARRAY[prio_idle].msp->r4 = 0;
+    TCB_ARRAY[prio_idle].msp->r5 = 0;
+    TCB_ARRAY[prio_idle].msp->r6 = 0;
+    TCB_ARRAY[prio_idle].msp->r7 = 0;
+    TCB_ARRAY[prio_idle].msp->r8 = 0;
+    TCB_ARRAY[prio_idle].msp->r9 = 0;
+    TCB_ARRAY[prio_idle].msp->r10 = 0;
+    TCB_ARRAY[prio_idle].msp->r11 = 0;
+    TCB_ARRAY[prio_idle].msp->lr = LR_RETURN_TO_USER_PSP;
    
+    TCB_ARRAY[prio_idle].state = READY;
+    TCB_ARRAY[prio_idle].svc_status = 0; //clown moment
  
-   TCB_ARRAY[prio_idle].state = READY;
-   TCB_ARRAY[prio_idle].svc_status = 0; //clown moment
+    global_threads_info.thread_time[prio_idle] = 0;
+    //global_threads_info.thread_time_left_in_T[prio_idle] = 1;
+    global_threads_info.thread_time_left_in_C[prio_idle] = 1;
  
-   global_threads_info.thread_time[prio_idle] = 0;
-   //global_threads_info.thread_time_left_in_T[prio_idle] = 1;
-   global_threads_info.thread_time_left_in_C[prio_idle] = 1;
+    // Initiating default thread values
+    int prio_default = max_threads + 1;
+    TCB_ARRAY[prio_default].computation_time = 0x1;
+    TCB_ARRAY[prio_default].period = 0x1;
+    TCB_ARRAY[prio_default].priority = prio_default;
+    TCB_ARRAY[prio_default].state = RUNNING;
+    TCB_ARRAY[prio_default].svc_status = 0; //clown moment
  
-   // Initiating default thread values
-   int prio_default = max_threads + 1;
-   TCB_ARRAY[prio_default].computation_time = 0x1;
-   TCB_ARRAY[prio_default].period = 0x1;
-   TCB_ARRAY[prio_default].priority = prio_default;
-   TCB_ARRAY[prio_default].state = RUNNING;
-   TCB_ARRAY[prio_default].svc_status = 0; //clown moment
+    global_threads_info.thread_time[prio_default] = 0;
+    global_threads_info.thread_time_left_in_C[prio_default] = 1;
  
-   global_threads_info.thread_time[prio_default] = 0;
-   global_threads_info.thread_time_left_in_C[prio_default] = 1;
- 
-   for(uint32_t i = 0; i < max_threads; i++){
-     global_threads_info.ready_threads[i] = 400;
-     global_threads_info.waiting_threads[i] = 400;
-   }
+    for(uint32_t i = 0; i < max_threads; i++){
+      global_threads_info.ready_threads[i] = 400;
+      global_threads_info.waiting_threads[i] = 400;
+    }
  
    global_threads_info.current_thread = prio_default;
  
    // Initialize the mutex array
    initialize_mutex_array();
- 
  
    return 0;
  }
@@ -512,49 +502,48 @@
   */
  int sys_thread_create(void *fn,uint32_t prio,uint32_t C,uint32_t T, void *vargp){
  
-   if(prio >= global_threads_info.max_threads || TCB_ARRAY[prio].state == READY) {
-     return -1;
-   }
+    if(prio >= global_threads_info.max_threads || TCB_ARRAY[prio].state == READY) {
+      return -1;
+    }
  
+    if(ub_test(C, T) < 0) {
+      return -1;
+    }
  
-   if(ub_test(C, T) < 0) {
-     return -1;
-   }
+    TCB_ARRAY[prio].priority = prio;
+    TCB_ARRAY[prio].computation_time = C;
+    TCB_ARRAY[prio].period = T;
  
-   TCB_ARRAY[prio].priority = prio;
-   TCB_ARRAY[prio].computation_time = C;
-   TCB_ARRAY[prio].period = T;
- 
-   interrupt_stack_frame * user_sp = (interrupt_stack_frame *)TCB_ARRAY[prio].msp->PSP;
+    interrupt_stack_frame * user_sp = (interrupt_stack_frame *)TCB_ARRAY[prio].msp->PSP;
    
-   user_sp->r0 = (uint32_t) vargp;
-   user_sp->r1 = 0;
-   user_sp->r2 = 0;
-   user_sp->r3 = 0;
-   user_sp->r12 = 0;
-   user_sp->lr = (uint32_t) &thread_kill;
-   user_sp->pc = (uint32_t) fn;
-   user_sp->xPSR = XPSR_INIT;
+    user_sp->r0 = (uint32_t) vargp;
+    user_sp->r1 = 0;
+    user_sp->r2 = 0;
+    user_sp->r3 = 0;
+    user_sp->r12 = 0;
+    user_sp->lr = (uint32_t) &thread_kill;
+    user_sp->pc = (uint32_t) fn;
+    user_sp->xPSR = XPSR_INIT;
  
-   TCB_ARRAY[prio].msp->r4 = 0;
-   TCB_ARRAY[prio].msp->r5 = 0;
-   TCB_ARRAY[prio].msp->r6 = 0;
-   TCB_ARRAY[prio].msp->r7 = 0;
-   TCB_ARRAY[prio].msp->r8 = 0;
-   TCB_ARRAY[prio].msp->r9 = 0;
-   TCB_ARRAY[prio].msp->r10 = 0;
-   TCB_ARRAY[prio].msp->r11 = 0;
-   TCB_ARRAY[prio].msp->lr = LR_RETURN_TO_USER_PSP;
+    TCB_ARRAY[prio].msp->r4 = 0;
+    TCB_ARRAY[prio].msp->r5 = 0;
+    TCB_ARRAY[prio].msp->r6 = 0;
+    TCB_ARRAY[prio].msp->r7 = 0;
+    TCB_ARRAY[prio].msp->r8 = 0;
+    TCB_ARRAY[prio].msp->r9 = 0;
+    TCB_ARRAY[prio].msp->r10 = 0;
+    TCB_ARRAY[prio].msp->r11 = 0;
+    TCB_ARRAY[prio].msp->lr = LR_RETURN_TO_USER_PSP;
  
-   TCB_ARRAY[prio].svc_status = 0;
-   TCB_ARRAY[prio].state = READY;
+    TCB_ARRAY[prio].svc_status = 0;
+    TCB_ARRAY[prio].state = READY;
  
-   /* Setting New Thread System Time Variables */
-   global_threads_info.thread_time[prio] = 0;
-   global_threads_info.thread_time_left_in_C[prio] = C;
-   /* END NEW */
+    /* Setting New Thread System Time Variables */
+    global_threads_info.thread_time[prio] = 0;
+    global_threads_info.thread_time_left_in_C[prio] = C;
+   
  
-   return 0;
+    return 0;
  }
  
  /**
@@ -697,9 +686,6 @@
      return;
    }
 
-   
-   
-
     // Check if the current thread's priority is less than or equal to the mutex's priority ceiling
     if (current_thread < mutex->prio_ceil) {
      printk("Warning: Thread %d cannot lock mutex %d because (%d) high priority(%d)\n",
@@ -741,8 +727,6 @@
         TCB_ARRAY[current_thread].held_mutex_bitmap = TCB_ARRAY[current_thread].held_mutex_bitmap | (1 << mutex->index); 
         //clear the bit corresponding to the mutex index in the waiting_mutex_bitmap
         TCB_ARRAY[current_thread].waiting_mutex_bitmap = TCB_ARRAY[current_thread].waiting_mutex_bitmap &  ~(1 << mutex->index); 
-
-        // END WHAT I ADDED
             
       return;
    }
@@ -769,13 +753,12 @@
    //raise the thread's priority to the mutex's priority ceiling
    if(TCB_ARRAY[current_thread].priority > mutex->prio_ceil)
    {
-     TCB_ARRAY[current_thread].priority = mutex->prio_ceil;
+      TCB_ARRAY[current_thread].priority = mutex->prio_ceil;
    }
  
    //set the bit corresponding to the mutex index in the held_mutex_bitmap
    TCB_ARRAY[current_thread].held_mutex_bitmap = TCB_ARRAY[current_thread].held_mutex_bitmap | (1 << mutex->index); 
    //clear the bit corresponding to the mutex index in the waiting_mutex_bitmap
-   
    TCB_ARRAY[current_thread].waiting_mutex_bitmap = TCB_ARRAY[current_thread].waiting_mutex_bitmap &  ~(1 << mutex->index); 
 
  }
@@ -797,7 +780,6 @@
      printk("Warning: Thread %d is trying to unlock an already unlocked mutex %d\n", current_thread, mutex->index);
      return;
    }
-   
    if(mutex->locked_by != current_thread)
    {
      printk("Warning: Thread %d is trying to unlock mutex %d that it does not own\n", current_thread, mutex->index);
@@ -814,8 +796,7 @@
  
    //unlock the mutex
    mutex->locked_by = NOT_LOCKED;
-   
- 
+
    //clear the bit corresponding to the mutex index in the held_mutex_bitmap
    TCB_ARRAY[current_thread].held_mutex_bitmap = TCB_ARRAY[current_thread].held_mutex_bitmap & ~(1 << mutex->index); 
  
@@ -887,14 +868,12 @@ void systick_c_handler() {
     global_threads_info.thread_time_left_in_C[curr_running] = time_left_in_compute;
   }
 
-  //int time_left_in_period;
   for (uint32_t i = 0; i < global_threads_info.max_threads; i ++){
     if (TCB_ARRAY[i].state == READY || TCB_ARRAY[i].state == WAITING || TCB_ARRAY[i].state == RUNNING){
       
       if (sys_get_time() % TCB_ARRAY[i].period == 0){
        
-        global_threads_info.thread_time_left_in_C[i] = TCB_ARRAY[i].computation_time;
-   
+          global_threads_info.thread_time_left_in_C[i] = TCB_ARRAY[i].computation_time;   
          TCB_ARRAY[i].state = READY;
       }
       
